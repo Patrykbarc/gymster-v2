@@ -13,7 +13,12 @@ export default [
     route('register', './routes/auth/register.tsx')
   ]),
 
-  layout('./routes/dashboard/layout.tsx', [
-    route('dashboard', './routes/dashboard/dashboard.tsx')
+  layout('./routes/home/layout.tsx', [
+    route('app', './routes/home/home.tsx', [
+      // route('exercises', './routes/dashboard/exercises.tsx'),
+      // route('plans', './routes/dashboard/plans.tsx'),
+      // route('workout', './routes/dashboard/workout.tsx'),
+      // route('history', './routes/dashboard/history.tsx')
+    ])
   ])
 ] satisfies RouteConfig

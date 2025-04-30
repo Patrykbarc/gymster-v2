@@ -14,27 +14,27 @@ import {
 const items = [
   {
     title: 'Dashboard',
-    url: '/dashboard',
+    url: '/app',
     icon: Home
   },
   {
     title: 'Exercises',
-    url: '/exercises',
+    url: '/app/exercises',
     icon: Dumbbell
   },
   {
     title: 'Workout plans',
-    url: '/workout-plans',
+    url: '/app/plans',
     icon: ClipboardList
   },
   {
     title: 'Start workout',
-    url: '/start-workout',
+    url: '/app/workout',
     icon: Play
   },
   {
     title: 'History',
-    url: '/history',
+    url: '/app/history',
     icon: HistoryIcon
   }
 ]

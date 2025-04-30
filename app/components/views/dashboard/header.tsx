@@ -10,7 +10,7 @@ export function Header({
   description: string
 }) {
   return (
-    <div className="flex h-fit w-full flex-col items-start justify-between gap-4 border-b p-6 md:flex-row md:items-center">
+    <nav className="flex h-fit w-full flex-col items-start justify-between gap-4 border-b p-6 md:flex-row md:items-center">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">{title}</h1>
         <p className="text-muted-foreground">{description}</p>
@@ -23,6 +23,6 @@ export function Header({
           </Link>
         </Button>
       </div>
-    </div>
+    </nav>
   )
 }
