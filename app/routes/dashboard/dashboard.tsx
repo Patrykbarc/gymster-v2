@@ -1,4 +1,9 @@
 import { useLoaderData } from 'react-router'
+import type { Route } from '../+types/home'
+
+export function meta({}: Route.MetaArgs) {
+  return [{ title: 'Gymster | Dashboard' }]
+}
 
 export async function loader() {
   return {

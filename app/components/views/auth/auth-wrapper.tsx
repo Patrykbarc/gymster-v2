@@ -1,3 +1,4 @@
+import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
 
@@ -78,12 +79,12 @@ function AuthFooter({ variant }: { variant: AuthVariant }) {
       </Button>
       <div className="text-center text-sm">
         {texts[variant].title}{' '}
-        <a
-          href={variant === 'login' ? 'register' : 'login'}
+        <Link
+          to={variant === 'login' ? '/register' : '/login'}
           className="underline underline-offset-4"
         >
           {texts[variant].description}
-        </a>
+        </Link>
       </div>
     </>
   )
