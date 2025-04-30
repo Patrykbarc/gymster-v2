@@ -1,3 +1,5 @@
+import { RegisterForm } from '~/components/views/auth/register-form'
+
 export default function Register() {
-  return <div>Register</div>
+  return <RegisterForm />
 }
