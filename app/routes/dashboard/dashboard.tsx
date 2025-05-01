@@ -1,11 +1,11 @@
 import { useLoaderData } from 'react-router'
-import { QuickActions } from '~/components/views/dashboard/quick-actions'
-import { RecentWorkouts } from '~/components/views/dashboard/recent-workouts'
-import { SummaryCards } from '~/components/views/dashboard/summary-cards'
+import { QuickActions } from '~/components/views/dashboard/home/quick-actions'
+import { RecentWorkouts } from '~/components/views/dashboard/home/recent-workouts'
+import { SummaryCards } from '~/components/views/dashboard/home/summary-cards'
 import type { Route } from '../+types/home'
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: 'Gymster | Home' }]
+  return [{ title: 'Gymster | Dashboard' }]
 }
 
 export async function loader() {
@@ -41,7 +41,7 @@ export async function loader() {
   }
 }
 
-export default function Home() {
+export default function Dashboard() {
   useLoaderData<typeof loader>()
 
   return (

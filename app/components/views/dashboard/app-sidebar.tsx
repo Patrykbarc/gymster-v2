@@ -1,4 +1,5 @@
 import { ClipboardList, Dumbbell, HistoryIcon, Home, Play } from 'lucide-react'
+import { Link } from 'react-router'
 
 import {
   Sidebar,
@@ -14,27 +15,27 @@ import {
 const items = [
   {
     title: 'Dashboard',
-    url: '/app',
+    url: '/dashboard',
     icon: Home
   },
   {
     title: 'Exercises',
-    url: '/app/exercises',
+    url: '/dashboard/exercises',
     icon: Dumbbell
   },
   {
     title: 'Workout plans',
-    url: '/app/plans',
+    url: '/dashboard/plans',
     icon: ClipboardList
   },
   {
     title: 'Start workout',
-    url: '/app/workout',
+    url: '/dashboard/workout',
     icon: Play
   },
   {
     title: 'History',
-    url: '/app/history',
+    url: '/dashboard/history',
     icon: HistoryIcon
   }
 ]
@@ -50,10 +51,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link to={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
