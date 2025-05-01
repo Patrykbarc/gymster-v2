@@ -1,13 +1,17 @@
-import { Play } from 'lucide-react'
 import { Link, useLoaderData } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { useSegment } from '~/hooks/use-segment'
 import type { Headers, PathSegments } from '~/routes/dashboard/layout'
 
-export function Header() {
+type IconMap = {
+  [key: string]: React.ElementType
+}
+
+export function Header({ iconMap }: { iconMap: IconMap }) {
   const { headers } = useLoaderData<{ headers: Headers }>()
   const { currentSegment } = useSegment() as { currentSegment: PathSegments }
   const header = headers[currentSegment]
+  const Icon = iconMap[header.button?.icon as keyof typeof iconMap]
 
   if (!header) return null
 
@@ -21,7 +25,7 @@ export function Header() {
         {header.button && (
           <Button asChild>
             <Link to={`/dashboard/${header.button.href}`}>
-              <Play className="mr-2 h-4 w-4" />
+              {Icon && <Icon />}
               {header.button.text}
             </Link>
           </Button>

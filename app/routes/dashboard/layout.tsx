@@ -1,3 +1,4 @@
+import { Play, Plus } from 'lucide-react'
 import { Outlet, useLoaderData } from 'react-router'
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
 import { AppSidebar } from '~/components/views/dashboard/app-sidebar'
@@ -10,10 +11,16 @@ export type PathSegments =
   | 'workout'
   | 'history'
 
+const itemMap = {
+  Play,
+  Plus
+}
+
 export type HeaderType = {
   title: string
   description: string
   button?: {
+    icon: keyof typeof itemMap
     text: string
     href: string
   }
@@ -29,6 +36,7 @@ export async function loader() {
       title: 'Dashboard',
       description: 'Track your fitness journey and monitor your progress',
       button: {
+        icon: 'Play',
         text: 'Start Workout',
         href: 'start-workout'
       }
@@ -37,6 +45,7 @@ export async function loader() {
       title: 'Exercises',
       description: 'Browse, search, and manage your exercises',
       button: {
+        icon: 'Plus',
         text: 'Add Exercise',
         href: 'add-exercise'
       }
@@ -56,7 +65,7 @@ export default function DashboardLayout() {
           <SidebarTrigger className="fixed right-0 p-6 md:hidden" />
 
           <div className="flex w-full flex-col">
-            <Header />
+            <Header iconMap={itemMap} />
             <div className="p-6">
               <Outlet />
             </div>
