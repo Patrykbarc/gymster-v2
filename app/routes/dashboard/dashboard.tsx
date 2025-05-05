@@ -1,7 +1,7 @@
 import { useLoaderData } from 'react-router'
-import { QuickActions } from '~/components/views/dashboard/home/quick-actions'
-import { RecentWorkouts } from '~/components/views/dashboard/home/recent-workouts'
-import { SummaryCards } from '~/components/views/dashboard/home/summary-cards'
+import { QuickActions } from '~/components/views/home/dashboard/quick-actions'
+import { RecentWorkouts } from '~/components/views/home/dashboard/recent-workouts'
+import { SummaryCards } from '~/components/views/home/dashboard/summary-cards'
 import type { Route } from '../+types/home'
 
 export function meta({}: Route.MetaArgs) {

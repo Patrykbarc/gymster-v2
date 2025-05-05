@@ -15,8 +15,8 @@ export default [
 
   layout('./routes/dashboard/layout.tsx', [
     route('dashboard', './routes/dashboard/dashboard.tsx'),
-    route('dashboard/exercises', './routes/dashboard/exercises.tsx')
-    // route('dashboard/plans', './routes/dashboard/plans.tsx'),
+    route('dashboard/exercises', './routes/dashboard/exercises.tsx'),
+    route('dashboard/workout-plans', './routes/dashboard/workout-plans.tsx')
     // route('dashboard/workout', './routes/dashboard/workout.tsx'),
     // route('dashboard/history', './routes/dashboard/history.tsx')
   ])

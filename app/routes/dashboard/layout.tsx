@@ -1,11 +1,10 @@
 import { Outlet } from 'react-router'
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
-import { AppSidebar } from '~/components/views/dashboard/app-sidebar'
-import { Header } from '~/components/views/dashboard/header'
+import { AppSidebar } from '~/components/views/home/app-sidebar'
+import { Header } from '~/components/views/home/header'
 
 export default function DashboardLayout() {
   return (
-    <>
       <main className="min-h-dvh">
         <SidebarProvider>
           <AppSidebar />
@@ -19,6 +18,5 @@ export default function DashboardLayout() {
           </div>
         </SidebarProvider>
       </main>
-    </>
   )
 }
