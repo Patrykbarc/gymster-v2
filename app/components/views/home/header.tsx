@@ -39,8 +39,12 @@ const getHeaderData: HeaderDataStructure = {
     button: {
       icon: <Plus />,
       text: 'Create Plan',
-      href: 'create-plan'
+      href: 'workout-plans/new'
     }
+  },
+  '/dashboard/workout-plans/new': {
+    title: 'New Workout Plan',
+    description: 'Create a new workout plan'
   }
 }
 
