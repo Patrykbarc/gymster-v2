@@ -1,17 +1,44 @@
-import { Link, useLoaderData } from 'react-router'
+import { Play, Plus } from 'lucide-react'
+import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { useSegment } from '~/hooks/use-segment'
-import type { Headers, PathSegments } from '~/routes/dashboard/layout'
 
-type IconMap = {
-  [key: string]: React.ElementType
+type HeaderDataStructure = {
+  [key: string]: {
+    title: string
+    description: string
+    button?: {
+      icon: React.ReactNode
+      text: string
+      href: string
+    }
+  }
 }
 
-export function Header({ iconMap }: { iconMap: IconMap }) {
-  const { headers } = useLoaderData<{ headers: Headers }>()
-  const { currentSegment } = useSegment() as { currentSegment: PathSegments }
-  const header = headers[currentSegment]
-  const Icon = iconMap[header.button?.icon as keyof typeof iconMap]
+const getHeaderData: HeaderDataStructure = {
+  dashboard: {
+    title: 'Dashboard',
+    description: 'Track your fitness journey and monitor your progress',
+    button: {
+      icon: <Play />,
+      text: 'Start Workout',
+      href: 'start-workout'
+    }
+  },
+  exercises: {
+    title: 'Exercises',
+    description: 'Browse, search, and manage your exercises',
+    button: {
+      icon: <Plus />,
+      text: 'Add Exercise',
+      href: 'add-exercise'
+    }
+  }
+}
+
+export function Header() {
+  const { currentSegment } = useSegment()
+  const header = getHeaderData[currentSegment]
 
   if (!header) return null
 
@@ -25,7 +52,7 @@ export function Header({ iconMap }: { iconMap: IconMap }) {
         {header.button && (
           <Button asChild>
             <Link to={`/dashboard/${header.button.href}`}>
-              {Icon && <Icon />}
+              {header.button.icon}
               {header.button.text}
             </Link>
           </Button>
