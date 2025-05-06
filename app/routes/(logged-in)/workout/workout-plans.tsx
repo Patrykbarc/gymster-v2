@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
-import { WorkoutPlanList } from '~/components/views/home/workout-plans/workout-plan-list'
+import { WorkoutPlanList } from '~/components/views/(logged-in)/workout-plans/workout-plan-list'
 
 export default function WorkoutPlansPage() {
   return (

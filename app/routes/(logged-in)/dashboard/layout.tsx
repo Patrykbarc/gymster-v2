@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router'
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
-import { AppSidebar } from '~/components/views/home/app-sidebar'
-import { Header } from '~/components/views/home/header'
+import { AppSidebar } from '~/components/views/(logged-in)/app-sidebar'
+import { Header } from '~/components/views/(logged-in)/header'
 
 export default function DashboardLayout() {
   return (

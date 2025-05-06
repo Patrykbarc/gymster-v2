@@ -30,7 +30,7 @@ const items = [
   },
   {
     title: 'Start workout',
-    url: '/dashboard/workout',
+    url: '/dashboard/start-workout',
     icon: Play
   },
   {

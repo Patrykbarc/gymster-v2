@@ -13,13 +13,23 @@ export default [
     route('register', './routes/auth/register.tsx')
   ]),
 
-  layout('./routes/dashboard/layout.tsx', [
-    route('dashboard', './routes/dashboard/dashboard.tsx'),
-    route('dashboard/exercises', './routes/dashboard/exercises.tsx'),
-    route('dashboard/workout-plans', './routes/workout/workout-plans.tsx'),
+  layout('./routes/(logged-in)/dashboard/layout.tsx', [
+    route('dashboard', './routes/(logged-in)/dashboard/dashboard.tsx'),
+    route(
+      'dashboard/exercises',
+      './routes/(logged-in)/dashboard/exercises.tsx'
+    ),
+    route(
+      'dashboard/workout-plans',
+      './routes/(logged-in)/workout/workout-plans.tsx'
+    ),
     route(
       'dashboard/workout-plans/new',
-      './routes/workout/new-workout-plan.tsx'
+      './routes/(logged-in)/workout/new-workout-plan.tsx'
+    ),
+    route(
+      'dashboard/start-workout',
+      './routes/(logged-in)/start-workout/start-workout.tsx'
     )
     // route('dashboard/workout', './routes/dashboard/workout.tsx'),
     // route('dashboard/history', './routes/dashboard/history.tsx')
