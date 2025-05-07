@@ -1,21 +1,19 @@
-'use client'
-
 import { CheckCircle, XCircle } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 
-interface Set {
+type Set = {
   reps: number
   weight: number
   completed: boolean
 }
 
-interface Exercise {
+type Exercise = {
   sets: Set[]
 }
 
-interface ActiveExerciseProps {
+type ActiveExerciseProps = {
   exercise: Exercise
   exerciseIndex: number
   onSetComplete: (
@@ -100,7 +98,7 @@ export default function ActiveExercise({
                 )
               }
               className="h-8"
-              disabled={setData[setIndex].completed || !isActive}
+              disabled={setData[setIndex].completed}
             />
           </div>
           <div className="col-span-3 md:col-span-2">
@@ -116,7 +114,7 @@ export default function ActiveExercise({
                 )
               }
               className="h-8"
-              disabled={setData[setIndex].completed || !isActive}
+              disabled={setData[setIndex].completed}
             />
           </div>
           <div className="col-span-5 flex gap-2 md:col-span-7">
@@ -136,7 +134,6 @@ export default function ActiveExercise({
                 size="sm"
                 className="h-8"
                 onClick={() => handleSetComplete(setIndex, true)}
-                disabled={!isActive}
               >
                 <CheckCircle className="mr-2 h-4 w-4" />
                 Complete Set

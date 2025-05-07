@@ -1,5 +1,3 @@
-'use client'
-
 import { format } from 'date-fns'
 import { CheckCircle, Clock, XCircle } from 'lucide-react'
 import { useEffect, useState } from 'react'
@@ -15,6 +13,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import ActiveExercise from '~/components/views/(logged-in)/active-workout/active-exercise'
+import { cn } from '~/lib/utils'
 
 type ExerciseSet = {
   reps: number
@@ -123,14 +122,6 @@ export default function ActiveWorkoutPage() {
     return () => clearInterval(timer)
   }, [startTime])
 
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const secs = seconds % 60
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
-
   const handleSetComplete = (
     exerciseIndex: number,
     setIndex: number,
@@ -200,7 +191,10 @@ export default function ActiveWorkoutPage() {
         {exercises.map((exercise, index) => (
           <Card
             key={exercise.id}
-            className={index === currentExerciseIndex ? 'border-primary' : ''}
+            className={cn(
+              'transition-colors',
+              exercise.completed && 'border-green-500 bg-green-50'
+            )}
           >
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="flex items-center gap-2 text-xl">
@@ -254,4 +248,12 @@ export default function ActiveWorkoutPage() {
       </Card>
     </div>
   )
+}
+
+const formatTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+  const secs = seconds % 60
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
