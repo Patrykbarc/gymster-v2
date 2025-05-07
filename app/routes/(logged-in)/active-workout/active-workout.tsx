@@ -60,13 +60,10 @@ export default function ActiveWorkoutPage() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const planId = searchParams.get('planId')
-  const isCustom = searchParams.get('custom') === 'true'
 
   const [startTime] = useState(new Date())
   const [elapsedTime, setElapsedTime] = useState(0)
-  const [workoutName, setWorkoutName] = useState(
-    isCustom ? 'Custom Workout' : ''
-  )
+  const [workoutName, setWorkoutName] = useState('')
   const [exercises, setExercises] = useState<Exercise[]>([])
   const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
 
@@ -87,30 +84,11 @@ export default function ActiveWorkoutPage() {
             }))
         }))
       )
-    } else if (isCustom) {
-      setExercises([
-        {
-          id: '1',
-          name: 'Bench Press',
-          completed: false,
-          sets: Array(3)
-            .fill(null)
-            .map(() => ({ reps: 10, weight: 0, completed: false }))
-        },
-        {
-          id: '4',
-          name: 'Pull-up',
-          completed: false,
-          sets: Array(3)
-            .fill(null)
-            .map(() => ({ reps: 8, weight: 0, completed: false }))
-        }
-      ])
     } else {
       // TODO: Redirect to start workout page
-      //   navigate('/start-workout')
+      //   navigate('/dashboard/start-workout')
     }
-  }, [planId, isCustom, navigate])
+  }, [planId, navigate])
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -166,7 +144,7 @@ export default function ActiveWorkoutPage() {
     }
 
     console.log('Finished workout:', workoutData)
-    navigate('/history')
+    navigate('/dashboard/history')
   }
 
   const allExercisesCompleted =

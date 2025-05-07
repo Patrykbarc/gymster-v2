@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ExerciseList, type Exercise } from '~/components/shared/exercise-list/exercise-list'
+import type { Exercise } from '~/components/shared/exercise-list/_types/types'
+import { ExerciseList } from '~/components/shared/exercise-list/exercise-list'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -44,7 +45,7 @@ export function WorkoutPlanForm({ plan = null }: WorkoutPlanFormProps) {
     e.preventDefault()
     console.log('Saving workout plan:', { ...formData, exercises })
 
-    navigate('/workout-plans')
+    navigate('/dashboard/workout-plans')
   }
 
   return (

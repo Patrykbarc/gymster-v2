@@ -30,7 +30,7 @@ const getHeaderData: HeaderDataStructure = {
     button: {
       icon: <Plus />,
       text: 'Add Exercise',
-      href: 'add-exercise'
+      href: 'exercises/new'
     }
   },
   '/dashboard/workout-plans': {
