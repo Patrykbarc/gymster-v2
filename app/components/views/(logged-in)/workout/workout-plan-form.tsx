@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
-import { ExerciseList, type Exercise } from '~/components/shared/exercise-list'
+import { ExerciseList, type Exercise } from '~/components/shared/exercise-list/exercise-list'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
