@@ -69,7 +69,7 @@ export function StartFromPlan({ initialPlanId = null }: StartFromPlanProps) {
 
   const handleStartWorkout = () => {
     if (selectedPlanId) {
-      navigation(`/active-workout?planId=${selectedPlanId}`)
+      navigation(`/dashboard/active-workout?planId=${selectedPlanId}`)
     }
   }
 

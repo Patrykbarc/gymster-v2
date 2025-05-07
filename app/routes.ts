@@ -30,6 +30,10 @@ export default [
     route(
       'dashboard/start-workout',
       './routes/(logged-in)/start-workout/start-workout.tsx'
+    ),
+    route(
+      'dashboard/active-workout',
+      './routes/(logged-in)/active-workout/active-workout.tsx'
     )
     // route('dashboard/workout', './routes/dashboard/workout.tsx'),
     // route('dashboard/history', './routes/dashboard/history.tsx')

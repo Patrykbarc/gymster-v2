@@ -1,11 +1,8 @@
-"use client"
+'use client'
 
-import { useState } from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table"
-import { Badge } from "~/components/ui/badge"
-import { Button } from "~/components/ui/button"
-import { Edit, Play, Trash2 } from "lucide-react"
-import { Link } from "react-router"
+import { Edit, Play, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { Link } from 'react-router'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,35 +12,44 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
-} from "~/components/ui/alert-dialog"
+  AlertDialogTrigger
+} from '~/components/ui/alert-dialog'
+import { Badge } from '~/components/ui/badge'
+import { Button } from '~/components/ui/button'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '~/components/ui/table'
 
-// Mock data - would be replaced with actual data from database
 const workoutPlans = [
   {
-    id: "1",
-    name: "Upper Body Split",
-    description: "Focus on chest, back, and arms",
-    exerciseCount: 8,
+    id: '1',
+    name: 'Upper Body Split',
+    description: 'Focus on chest, back, and arms',
+    exerciseCount: 8
   },
   {
-    id: "2",
-    name: "Lower Body Split",
-    description: "Focus on quads, hamstrings, and calves",
-    exerciseCount: 6,
+    id: '2',
+    name: 'Lower Body Split',
+    description: 'Focus on quads, hamstrings, and calves',
+    exerciseCount: 6
   },
   {
-    id: "3",
-    name: "Full Body Workout",
-    description: "Complete body workout for beginners",
-    exerciseCount: 10,
+    id: '3',
+    name: 'Full Body Workout',
+    description: 'Complete body workout for beginners',
+    exerciseCount: 10
   },
   {
-    id: "4",
-    name: "Core Blast",
-    description: "Intense core and ab workout",
-    exerciseCount: 5,
-  },
+    id: '4',
+    name: 'Core Blast',
+    description: 'Intense core and ab workout',
+    exerciseCount: 5
+  }
 ]
 
 export function WorkoutPlanList() {
@@ -67,7 +73,9 @@ export function WorkoutPlanList() {
         {plans.map((plan) => (
           <TableRow key={plan.id}>
             <TableCell className="font-medium">{plan.name}</TableCell>
-            <TableCell className="hidden md:table-cell">{plan.description}</TableCell>
+            <TableCell className="hidden md:table-cell">
+              {plan.description}
+            </TableCell>
             <TableCell>
               <Badge variant="outline">{plan.exerciseCount}</Badge>
             </TableCell>
@@ -96,12 +104,15 @@ export function WorkoutPlanList() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently delete the workout plan "{plan.name}". This action cannot be undone.
+                        This will permanently delete the workout plan "
+                        {plan.name}". This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(plan.id)}>Delete</AlertDialogAction>
+                      <AlertDialogAction onClick={() => handleDelete(plan.id)}>
+                        Delete
+                      </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

@@ -45,6 +45,10 @@ const getHeaderData: HeaderDataStructure = {
   '/dashboard/workout-plans/new': {
     title: 'New Workout Plan',
     description: 'Create a new workout plan'
+  },
+  '/dashboard/start-workout': {
+    title: 'Start Workout',
+    description: 'Begin a new workout session'
   }
 }
 
