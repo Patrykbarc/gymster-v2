@@ -12,7 +12,7 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import ActiveExercise from '~/components/views/(logged-in)/active-workout/active-exercise'
+import { ActiveExercise } from '~/components/views/(logged-in)/active-workout/active-exercise'
 import { cn } from '~/lib/utils'
 
 type ExerciseSet = {

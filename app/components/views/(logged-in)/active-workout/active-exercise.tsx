@@ -26,7 +26,7 @@ type ActiveExerciseProps = {
   isActive: boolean
 }
 
-export default function ActiveExercise({
+export function ActiveExercise({
   exercise,
   exerciseIndex,
   onSetComplete,

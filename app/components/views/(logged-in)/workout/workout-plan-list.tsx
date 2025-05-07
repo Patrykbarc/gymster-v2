@@ -1,5 +1,3 @@
-'use client'
-
 import { Edit, Play, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'

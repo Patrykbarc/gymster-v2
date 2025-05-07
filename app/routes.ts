@@ -38,7 +38,7 @@ export default [
     route(
       'dashboard/active-workout',
       './routes/(logged-in)/active-workout/active-workout.tsx'
-    )
-    // route('dashboard/history', './routes/dashboard/history.tsx')
+    ),
+    route('dashboard/history', './routes/(logged-in)/history/history.tsx')
   ])
 ] satisfies RouteConfig

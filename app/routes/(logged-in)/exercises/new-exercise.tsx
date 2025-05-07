@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
-import ExerciseForm from '~/components/views/(logged-in)/exercises/exercise-form'
+import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form'
 
 export default function NewExercisePage() {
   return (

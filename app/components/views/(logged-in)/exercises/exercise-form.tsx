@@ -29,7 +29,7 @@ const muscleCategories = [
   'Cardio'
 ]
 
-export default function ExerciseForm({
+export function ExerciseForm({
   exercise = null
 }: {
   exercise?: Exercise | null
