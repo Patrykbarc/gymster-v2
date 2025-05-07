@@ -1,4 +1,4 @@
-import { Edit, Search, Trash2 } from 'lucide-react'
+import { Edit, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { Link } from 'react-router'
 import {
@@ -15,14 +15,6 @@ import {
 import { Badge } from '~/components/ui/badge'
 import { Button } from '~/components/ui/button'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
-import { Input } from '~/components/ui/input'
-import {
   Table,
   TableBody,
   TableCell,
@@ -30,32 +22,6 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-
-export default function Exercises() {
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Exercise Library</CardTitle>
-          <CardDescription>
-            Browse, search, and manage your exercises
-          </CardDescription>
-          <div className="relative mt-2">
-            <Search className="text-muted-foreground absolute left-2.5 top-2.5 h-4 w-4" />
-            <Input
-              type="search"
-              placeholder="Search exercises..."
-              className="w-full pl-8"
-            />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ExerciseList />
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
 
 const exercises = [
   {
@@ -108,7 +74,7 @@ const exercises = [
   }
 ]
 
-function ExerciseList() {
+export function ExerciseListTable() {
   const [exerciseList, setExerciseList] = useState(exercises)
 
   const handleDelete = (id: string) => {

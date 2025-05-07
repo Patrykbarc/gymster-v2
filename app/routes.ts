@@ -13,11 +13,11 @@ export default [
     route('register', './routes/auth/register.tsx')
   ]),
 
-  layout('./routes/(logged-in)/dashboard/layout.tsx', [
+  layout('./routes/(logged-in)/layout.tsx', [
     route('dashboard', './routes/(logged-in)/dashboard/dashboard.tsx'),
     route(
       'dashboard/exercises',
-      './routes/(logged-in)/dashboard/exercises.tsx'
+      './routes/(logged-in)/exercises/exercises.tsx'
     ),
     route(
       'dashboard/workout-plans',

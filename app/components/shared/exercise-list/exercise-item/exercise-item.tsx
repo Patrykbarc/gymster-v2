@@ -9,8 +9,6 @@ type ExerciseItemProps = ExerciseItemContentProps & {
 export function ExerciseItem({ draggable, ...props }: ExerciseItemProps) {
   const content = <ExerciseItemContent {...props} draggable={draggable} />
 
-  console.log(props)
-
   if (draggable) {
     return (
       <Draggable

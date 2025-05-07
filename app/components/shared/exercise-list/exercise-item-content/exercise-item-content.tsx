@@ -9,9 +9,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { SetsInputWrapper } from '../sets-input-wrapper/sets-input-wrapper'
 import type { ExerciseItemContentProps } from '../_types/types'
-
+import { SetsInputWrapper } from '../sets-input-wrapper/sets-input-wrapper'
 
 export function ExerciseItemContent({
   exercise,
@@ -84,6 +83,7 @@ export function ExerciseItemContent({
         type="button"
         variant="ghost"
         size="icon"
+        className="mt-3"
         onClick={() => onRemove(index)}
       >
         <Trash2 className="h-4 w-4" />
