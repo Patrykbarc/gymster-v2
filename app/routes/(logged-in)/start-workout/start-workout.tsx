@@ -1,5 +1,3 @@
-'use client'
-
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import {
@@ -11,7 +9,7 @@ import {
 } from '~/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
 import { StartFromPlan } from '~/components/views/(logged-in)/start-workout/start-from-plan'
-import { StartFromScratch } from '~/components/views/(logged-in)/start-workout/start-from-scratch'
+import { WorkoutPlanForm } from '~/components/views/(logged-in)/workout/workout-plan-form'
 
 export default function StartWorkoutPage() {
   const searchParams = useParams()
@@ -52,7 +50,7 @@ export default function StartWorkoutPage() {
               <StartFromPlan initialPlanId={planId} />
             </TabsContent>
             <TabsContent value="scratch" className="space-y-4">
-              <StartFromScratch />
+              <WorkoutPlanForm />
             </TabsContent>
           </Tabs>
         </CardContent>

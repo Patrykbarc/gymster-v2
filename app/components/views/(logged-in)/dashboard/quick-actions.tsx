@@ -13,22 +13,22 @@ const links = [
   {
     label: 'Add New Exercise',
     icon: Plus,
-    to: '/app/exercises/new'
+    to: '/dashboard/exercises/new'
   },
   {
     label: 'Create Workout Plan',
     icon: Plus,
-    to: '/app/workout-plans/new'
+    to: '/dashboard/workout-plans/new'
   },
   {
     label: 'Start New Workout',
     icon: Play,
-    to: '/app/start-workout'
+    to: '/dashboard/start-workout'
   },
   {
     label: 'View Workout History',
     icon: History,
-    to: '/app/history'
+    to: '/dashboard/history'
   }
 ]
 
