@@ -2,29 +2,26 @@ import { supabase } from '~/supabase/supabaseClient'
 import type { UserRegistrationData } from './types'
 
 export const authService = {
-  register: async (userData: UserRegistrationData) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: userData.email,
-      password: userData.password,
-      options: {
-        data: {
-          first_name: userData.firstName
-        }
-      }
+  signUp: async (
+    email: string,
+    password: string,
+    userData: UserRegistrationData
+  ) => {
+    return await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: userData }
     })
-    return { data, error }
   },
 
-  login: async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+  signIn: async (email: string, password: string) => {
+    return await supabase.auth.signInWithPassword({
       email,
       password
     })
-    return { data, error }
   },
 
-  logout: async () => {
-    const { error } = await supabase.auth.signOut()
-    return { error }
+  signOut: async () => {
+    return await supabase.auth.signOut()
   }
 }

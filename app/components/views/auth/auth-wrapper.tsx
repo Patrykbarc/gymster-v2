@@ -49,7 +49,7 @@ function AuthTitle({ variant }: { variant: AuthVariant }) {
 function AuthFooter({ variant }: { variant: AuthVariant }) {
   const texts = {
     login: {
-      button: 'Create Account',
+      button: 'Login',
       title: "Don't have an account?",
       description: 'Sign up'
     },
