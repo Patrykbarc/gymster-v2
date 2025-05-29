@@ -7,8 +7,11 @@ import {
   ScrollRestoration
 } from 'react-router'
 
+import { type Session } from '@supabase/supabase-js'
+import { useEffect, useState } from 'react'
 import type { Route } from './+types/root'
 import './app.css'
+import { supabase } from './supabase/supabaseClient'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -24,6 +27,20 @@ export const links: Route.LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const [session, setSession] = useState<Session | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <html lang="en">
       <head>
