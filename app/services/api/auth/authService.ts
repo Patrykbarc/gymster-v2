@@ -2,6 +2,10 @@ import { supabase } from '~/supabase/supabaseClient'
 import type { UserRegistrationData } from './types'
 
 export const authService = {
+  getUser: async () => {
+    return await supabase.auth.getUser()
+  },
+
   signUp: async (
     email: string,
     password: string,

@@ -63,11 +63,13 @@ export function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
   const { signUp, isLoading } = useAuthStore()
 
   async function onSubmit(data: Schema) {
-   const {} = signUp(data.email, data.password, {
+    const response = await signUp(data.email, data.password, {
       firstName: data.name,
       email: data.email,
       password: data.password
     })
+
+    console.log(response)
   }
 
   return (
@@ -78,8 +80,8 @@ export function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
     >
       <div className="grid gap-6">
         {inputs.map((input) => (
-          <div className="grid gap-3">
-            <div className="space-y-1" key={input.name}>
+          <div key={input.name} className="grid gap-3">
+            <div className="space-y-1">
               <Label htmlFor={input.name}>{input.label}</Label>
               <Input
                 id={input.name}

@@ -6,6 +6,8 @@ import type { UserRegistrationData } from '~/services/api/auth/types'
 type AuthState = {
   user: User | null
   isLoading: boolean
+  setUser: (user: User | null) => void
+  setIsLoading: (isLoading: boolean) => void
   signUp: (
     email: string,
     password: string,
@@ -17,7 +19,15 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  isLoading: false,
+  isLoading: true,
+
+  setUser: (user) => {
+    set({ user })
+  },
+
+  setIsLoading: (isLoading) => {
+    set({ isLoading })
+  },
 
   signUp: async (email, password, userData) => {
     set({ isLoading: true })
@@ -44,7 +54,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (error) throw error
       set({ user: data.user })
     } catch (error) {
-      console.error('Error signing in:', error)
       throw error
     } finally {
       set({ isLoading: false })

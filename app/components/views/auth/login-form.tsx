@@ -41,6 +41,9 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
             required
             {...register('email')}
           />
+          {errors.email && (
+            <p className="text-sm text-red-500">{errors.email.message}</p>
+          )}
         </div>
         <div className="grid gap-3">
           <ForgotPassword />
@@ -50,6 +53,9 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
             required
             {...register('password')}
           />
+          {errors.password && (
+            <p className="text-sm text-red-500">{errors.password.message}</p>
+          )}
         </div>
       </div>
     </AuthWrapper>
