@@ -1,6 +1,7 @@
 import { Link } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { cn } from '~/lib/utils'
+import { useAuthStore } from '~/store/authStore'
 
 type AuthVariant = 'login' | 'register'
 
@@ -79,6 +80,8 @@ function AuthTitle({ variant }: { variant: AuthVariant }) {
 }
 
 function AuthFooter({ variant }: { variant: AuthVariant }) {
+  const { signInWithGoogle } = useAuthStore()
+
   return (
     <>
       <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
@@ -86,7 +89,7 @@ function AuthFooter({ variant }: { variant: AuthVariant }) {
           {texts.provider[variant].google.title}
         </span>
       </div>
-      <Button variant="outline" className="w-full">
+      <Button variant="outline" className="w-full" onClick={signInWithGoogle}>
         {texts.provider[variant].google.button}
       </Button>
       <div className="text-center text-sm">
