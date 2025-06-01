@@ -4,7 +4,7 @@ import {
   serializeCookieHeader
 } from '@supabase/ssr'
 
-export function createClient(request: Request) {
+export function server(request: Request) {
   const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL
   const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
 

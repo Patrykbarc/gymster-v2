@@ -1,9 +1,10 @@
-import { supabase } from '~/supabase/client'
+import { client } from '~/supabase/client'
+import { server } from '~/supabase/server'
 import type { UserRegistrationData } from './types'
 
 export const authService = {
-  getUser: async () => {
-    return await supabase.auth.getUser()
+  getUser: async (request: Request) => {
+    return await server(request).supabase.auth.getUser()
   },
 
   signUp: async (
@@ -11,7 +12,7 @@ export const authService = {
     password: string,
     userData: UserRegistrationData
   ) => {
-    return await supabase.auth.signUp({
+    return await client.auth.signUp({
       email,
       password,
       options: { data: userData }
@@ -19,13 +20,13 @@ export const authService = {
   },
 
   signIn: async (email: string, password: string) => {
-    return await supabase.auth.signInWithPassword({
+    return await client.auth.signInWithPassword({
       email,
       password
     })
   },
 
   signOut: async () => {
-    return await supabase.auth.signOut()
+    return await client.auth.signOut()
   }
 }

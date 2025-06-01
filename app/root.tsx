@@ -3,6 +3,7 @@ import {
   Links,
   Meta,
   Outlet,
+  redirect,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -11,7 +12,7 @@ import {
 
 import type { Route } from './+types/root'
 import './app.css'
-import { createClient } from './supabase/server'
+import { authService } from './services/api/auth/authService'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -46,19 +47,31 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const client = createClient(request)
+  const url = new URL(request.url)
+  const urls = ['/login', '/register']
+
+  if (urls.includes(url.pathname)) {
+    return { user: null }
+  }
+
   const {
     data: { user },
     error
-  } = await client.supabase.auth.getUser()
+  } = await authService.getUser(request)
 
-  console.log('Session data:', { user, error })
+  if (error) {
+    console.error('Auth error:', error)
+  }
+
+  if (!user) {
+    return redirect('/login')
+  }
+
   return { user }
 }
 
 export default function App() {
   const { user } = useLoaderData<typeof loader>()
-  console.log(user)
   return <Outlet />
 }
 
