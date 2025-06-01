@@ -23,7 +23,7 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
   } = useForm<Schema>({
     resolver: zodResolver(schema)
   })
-  const { signInWithEmail } = useAuthStore()
+  const { signInWithPassword: signInWithEmail, isLoading } = useAuthStore()
 
   async function onSubmit(data: Schema) {
     await signInWithEmail(data.email, data.password)
@@ -31,35 +31,38 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
 
   return (
     <AuthWrapper variant="login" onSubmit={handleSubmit(onSubmit)} {...props}>
-      <div className="grid gap-6">
-        <div className="grid gap-3">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            required
-            tabIndex={1}
-            {...register('email')}
-          />
-          {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
-          )}
+      <fieldset disabled={isLoading}>
+        <div className="grid gap-6">
+          <div className="grid gap-3">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="m@example.com"
+              required
+              tabIndex={1}
+              {...register('email')}
+            />
+            {errors.email && (
+              <p className="text-sm text-red-500">{errors.email.message}</p>
+            )}
+          </div>
+          <div className="grid gap-3">
+            <ForgotPassword />
+            <Input
+              id="password"
+              type="password"
+              placeholder="********"
+              required
+              tabIndex={2}
+              {...register('password')}
+            />
+            {errors.password && (
+              <p className="text-sm text-red-500">{errors.password.message}</p>
+            )}
+          </div>
         </div>
-        <div className="grid gap-3">
-          <ForgotPassword />
-          <Input
-            id="password"
-            type="password"
-            required
-            tabIndex={2}
-            {...register('password')}
-          />
-          {errors.password && (
-            <p className="text-sm text-red-500">{errors.password.message}</p>
-          )}
-        </div>
-      </div>
+      </fieldset>
     </AuthWrapper>
   )
 }

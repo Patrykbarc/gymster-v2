@@ -11,13 +11,14 @@ type AuthState = {
     password: string,
     userData: UserRegistrationData
   ) => Promise<void>
-  signInWithEmail: (email: string, password: string) => Promise<void>
+  signInWithPassword: (email: string, password: string) => Promise<void>
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  isLoading: true,
+  isLoading: false,
 
   signUp: async (email, password, userData) => {
     set({ isLoading: true })
@@ -37,12 +38,26 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signInWithEmail: async (email, password) => {
+  signInWithPassword: async (email, password) => {
     set({ isLoading: true })
     try {
-      const { data, error } = await authService.signIn(email, password)
+      const { data, error } = await authService.signInWithPassword(
+        email,
+        password
+      )
       if (error) throw error
       set({ user: data.user })
+    } catch (error) {
+      throw error
+    } finally {
+      set({ isLoading: false })
+    }
+  },
+
+  signInWithGoogle: async () => {
+    set({ isLoading: true })
+    try {
+      await authService.signInWithGoogle()
     } catch (error) {
       throw error
     } finally {

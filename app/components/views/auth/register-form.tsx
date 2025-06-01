@@ -81,21 +81,19 @@ export function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
       <div className="grid gap-6">
         {inputs.map((input) => (
           <div key={input.name} className="grid gap-3">
-            <div className="space-y-1">
-              <Label htmlFor={input.name}>{input.label}</Label>
-              <Input
-                id={input.name}
-                type={input.type}
-                placeholder={input.placeholder}
-                required
-                {...register(input.name)}
-              />
-              {errors[input.name] && (
-                <p className="text-sm text-red-500">
-                  {errors[input.name]?.message}
-                </p>
-              )}
-            </div>
+            <Label htmlFor={input.name}>{input.label}</Label>
+            <Input
+              id={input.name}
+              type={input.type}
+              placeholder={input.placeholder}
+              required
+              {...register(input.name)}
+            />
+            {errors[input.name] && (
+              <p className="text-sm text-red-500">
+                {errors[input.name]?.message}
+              </p>
+            )}
           </div>
         ))}
       </div>

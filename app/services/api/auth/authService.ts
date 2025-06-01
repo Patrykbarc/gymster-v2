@@ -19,10 +19,17 @@ export const authService = {
     })
   },
 
-  signIn: async (email: string, password: string) => {
+  signInWithPassword: async (email: string, password: string) => {
     return await client.auth.signInWithPassword({
       email,
       password
+    })
+  },
+
+  signInWithGoogle: async () => {
+    return await client.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/dashboard` }
     })
   },
 
