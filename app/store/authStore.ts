@@ -13,7 +13,7 @@ type AuthState = {
     password: string,
     userData: UserRegistrationData
   ) => Promise<void>
-  signIn: (email: string, password: string) => Promise<void>
+  signInWithEmail: (email: string, password: string) => Promise<void>
   signOut: () => Promise<void>
 }
 
@@ -47,7 +47,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signIn: async (email, password) => {
+  signInWithEmail: async (email, password) => {
     set({ isLoading: true })
     try {
       const { data, error } = await authService.signIn(email, password)

@@ -1,4 +1,4 @@
-import { supabase } from '~/supabase/supabaseClient'
+import { supabase } from '~/supabase/client'
 import type { UserRegistrationData } from './types'
 
 export const authService = {

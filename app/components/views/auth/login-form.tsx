@@ -23,10 +23,10 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
   } = useForm<Schema>({
     resolver: zodResolver(schema)
   })
-  const { signIn, isLoading } = useAuthStore()
+  const { signInWithEmail, isLoading } = useAuthStore()
 
   async function onSubmit(data: Schema) {
-    await signIn(data.email, data.password)
+    await signInWithEmail(data.email, data.password)
   }
 
   return (

@@ -4,14 +4,14 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useLoaderData,
+  type LoaderFunctionArgs
 } from 'react-router'
 
-import { type Session } from '@supabase/supabase-js'
-import { useEffect, useState } from 'react'
 import type { Route } from './+types/root'
 import './app.css'
-import { supabase } from './supabase/supabaseClient'
+import { createClient } from './supabase/server'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -27,20 +27,6 @@ export const links: Route.LinksFunction = () => [
 ]
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null)
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-    })
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-    return () => subscription.unsubscribe()
-  }, [])
-
   return (
     <html lang="en">
       <head>
@@ -59,7 +45,20 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const client = createClient(request)
+  const {
+    data: { user },
+    error
+  } = await client.supabase.auth.getUser()
+
+  console.log('Session data:', { user, error })
+  return { user }
+}
+
 export default function App() {
+  const { user } = useLoaderData<typeof loader>()
+  console.log(user)
   return <Outlet />
 }
 
