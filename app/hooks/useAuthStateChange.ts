@@ -13,11 +13,9 @@ export function useAuthStateChange() {
       (event: AuthChangeEvent, session: Session | null) => {
         switch (event) {
           case 'SIGNED_IN':
-            // Redirect to dashboard or home page after sign in
             navigate('/dashboard')
             break
           case 'SIGNED_OUT':
-            // Redirect to login page after sign out
             navigate('/login')
             break
           case 'USER_UPDATED':
