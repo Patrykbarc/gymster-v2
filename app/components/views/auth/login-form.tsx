@@ -23,7 +23,7 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
   } = useForm<Schema>({
     resolver: zodResolver(schema)
   })
-  const { signInWithEmail, isLoading } = useAuthStore()
+  const { signInWithEmail } = useAuthStore()
 
   async function onSubmit(data: Schema) {
     await signInWithEmail(data.email, data.password)
@@ -39,6 +39,7 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
             type="email"
             placeholder="m@example.com"
             required
+            tabIndex={1}
             {...register('email')}
           />
           {errors.email && (
@@ -51,6 +52,7 @@ export function LoginForm({ ...props }: React.ComponentProps<'form'>) {
             id="password"
             type="password"
             required
+            tabIndex={2}
             {...register('password')}
           />
           {errors.password && (
