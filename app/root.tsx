@@ -12,6 +12,7 @@ import {
 
 import type { Route } from './+types/root'
 import './app.css'
+import { useAuthStateChange } from './hooks/useAuthStateChange'
 import { authService } from './services/api/auth/authService'
 
 export const links: Route.LinksFunction = () => [
@@ -48,19 +49,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
-  const urls = ['/login', '/register']
-
-  if (urls.includes(url.pathname)) {
-    return { user: null }
-  }
+  const publicUrls = ['/login', '/register']
 
   const {
     data: { user },
     error
   } = await authService.getUser(request)
 
-  if (error) {
-    console.error('Auth error:', error)
+  if (user && publicUrls.includes(url.pathname)) {
+    return redirect('/dashboard')
+  }
+
+  if (publicUrls.includes(url.pathname)) {
+    return { user: null }
   }
 
   if (!user) {
@@ -71,7 +72,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function App() {
-  const { user } = useLoaderData<typeof loader>()
+  useLoaderData<typeof loader>()
+  useAuthStateChange()
+
   return <Outlet />
 }
 
