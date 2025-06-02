@@ -1,87 +1,97 @@
-# Welcome to React Router!
+# Gymster v2
 
-A modern, production-ready template for building full-stack React applications using React Router.
+A gym and workout management application.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+## Requirements
 
-## Features
-
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- Node.js (version 18 or higher)
+- Supabase account
+- Node package manager (pnpm recommended)
 
 ## Getting Started
 
-### Installation
-
-Install the dependencies:
+### 1. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
-### Development
+### 2. Supabase Setup
 
-Start the development server with HMR:
+1. Create a new project in [Supabase](https://supabase.com)
+2. Copy `.env.example` to `.env` and update the following environment variables with your Supabase credentials:
 
 ```bash
-npm run dev
+cp .env.example .env
 ```
 
-Your application will be available at `http://localhost:5173`.
+Required environment variables:
 
-## Building for Production
+```
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
 
-Create a production build:
+### 3. Running the Application
+
+In development mode:
 
 ```bash
-npm run build
+pnpm dev
 ```
 
-## Deployment
+The application will be available at `http://localhost:5173`.
 
-### Docker Deployment
+## Available Scripts
 
-To build and run using Docker:
+- `pnpm dev` - starts development server
+- `pnpm build` - builds the application for production
+- `pnpm start` - runs the built application
+- `pnpm lint` - runs the linter
+- `pnpm format` - formats the code
+- `pnpm test` - runs tests
+- `pnpm db:generate-types` - generates the database types
 
-```bash
-docker build -t my-app .
+## Commit Convention
 
-# Run the container
-docker run -p 3000:3000 my-app
-```
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification for our commit messages. This helps maintain a clean and consistent git history.
 
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
+### Commit Message Format
 
 ```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
+<type>: <description>
 ```
 
-## Styling
+### Types
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that do not affect the meaning of the code
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `build`: Changes that affect the build system or external dependencies
+- `ci`: Changes to our CI configuration files and scripts
+- `chore`: Other changes that don't modify src or test files
 
----
+### Examples
 
-Built with ❤️ using React Router.
+```
+feat: add login functionality
+fix: resolve user data fetching issue
+docs: update installation instructions
+style: format button component
+```
+
+## Contributing
+
+1. Create a new branch (`git checkout -b feature/new-feature`)
+2. Commit your changes following the commit convention
+3. Push to the branch (`git push origin feature/new-feature`)
+4. Create a Pull Request
+
+## License
+
+MIT
