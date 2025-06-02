@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react'
+import { useLoaderData } from 'react-router'
 import {
   Card,
   CardContent,
@@ -8,8 +9,16 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { ExerciseListTable } from '~/components/views/(logged-in)/exercises/exercise-list-table'
+import { exercisesService } from '~/services/api/exercises/exercisesService'
+
+export async function loader() {
+  const exercises = await exercisesService.getExercises()
+  return { exercises }
+}
 
 export default function Exercises() {
+  const { exercises } = useLoaderData<typeof loader>()
+
   return (
     <div className="space-y-6">
       <Card>
@@ -28,7 +37,7 @@ export default function Exercises() {
           </div>
         </CardHeader>
         <CardContent>
-          <ExerciseListTable />
+          <ExerciseListTable exerciseList={exercises} />
         </CardContent>
       </Card>
     </div>

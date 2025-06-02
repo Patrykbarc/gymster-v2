@@ -10,7 +10,7 @@
     "lint": "eslint . --fix",
     "prettier": "prettier . --write",
     "e2e:codegen": "exec playwright codegen",
-    "e2e:test": "exec playwright test",
+    "e2e:test": "pnpm exec playwright test",
     "db:generate-types": "bash scripts/generate-supabase-types.sh"
   },
   "dependencies": {

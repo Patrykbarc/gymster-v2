@@ -1,5 +1,4 @@
 import { Edit, Trash2 } from 'lucide-react'
-import { useState } from 'react'
 import { Link } from 'react-router'
 import {
   AlertDialog,
@@ -22,6 +21,7 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import type { Database } from '~/types/database.types'
 
 const exercises = [
   {
@@ -74,12 +74,18 @@ const exercises = [
   }
 ]
 
-export function ExerciseListTable() {
-  const [exerciseList, setExerciseList] = useState(exercises)
+type ExerciseList = Database['public']['Tables']['exercises']['Row'][]
 
-  const handleDelete = (id: string) => {
-    setExerciseList(exerciseList.filter((exercise) => exercise.id !== id))
-  }
+export function ExerciseListTable({
+  exerciseList
+}: {
+  exerciseList: ExerciseList
+}) {
+  // const [exerciseList, setExerciseList] = useState(exercises)
+
+  // const handleDelete = (id: string) => {
+  //   setExerciseList(exerciseList.filter((exercise) => exercise.id !== id))
+  // }
 
   return (
     <Table>
@@ -87,7 +93,9 @@ export function ExerciseListTable() {
         <TableRow>
           <TableHead>Name</TableHead>
           <TableHead className="hidden md:table-cell">Description</TableHead>
-          <TableHead>Category</TableHead>
+          <TableHead className="hidden md:table-cell">Muscle group</TableHead>
+          <TableHead>Equipment</TableHead>
+          <TableHead>Difficulty</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
@@ -99,8 +107,14 @@ export function ExerciseListTable() {
               {exercise.description}
             </TableCell>
             <TableCell>
-              <Badge variant="outline">{exercise.muscleCategory}</Badge>
+              {exercise.muscle_group?.map((muscle) => (
+                <Badge variant="outline" key={muscle}>
+                  {muscle}
+                </Badge>
+              ))}
             </TableCell>
+            <TableCell>{exercise.equipment}</TableCell>
+            <TableCell>{exercise.difficulty}</TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="icon" asChild>
@@ -127,7 +141,7 @@ export function ExerciseListTable() {
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                        onClick={() => handleDelete(exercise.id)}
+                      // onClick={() => handleDelete(exercise.id)}
                       >
                         Delete
                       </AlertDialogAction>
