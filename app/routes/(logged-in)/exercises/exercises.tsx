@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react'
-import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import { Link, useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -9,15 +9,37 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { ExerciseListTable } from '~/components/views/(logged-in)/exercises/exercise-list-table'
+import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
+import type { Database } from '~/types/database.types'
+
+type ExerciseList = Database['public']['Tables']['exercises']['Row'][]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const exercises = await exercisesService.getExercises()
-  return { exercises }
+  const {
+    data: { user }
+  } = await authService.getUser(request)
+
+  const exercises: ExerciseList = await exercisesService.getExercises()
+  console.log(exercises)
+  return { exercises, user }
 }
 
 export default function Exercises() {
-  const { exercises } = useLoaderData<typeof loader>()
+  const { exercises, user } = useLoaderData<typeof loader>()
+
+  if (exercises.length === 0) {
+    return (
+      <div className="mt-10 flex h-full items-center justify-center">
+        <p className="text-muted-foreground text-sm">
+          No exercises found.{' '}
+          <Link className="text-blue-500" to="new">
+            Create your first exercise.
+          </Link>
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -37,7 +59,7 @@ export default function Exercises() {
           </div>
         </CardHeader>
         <CardContent>
-          <ExerciseListTable exerciseList={exercises} />
+          <ExerciseListTable />
         </CardContent>
       </Card>
     </div>

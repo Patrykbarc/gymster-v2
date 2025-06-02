@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
+import { useLoaderData, useNavigate } from 'react-router'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -13,11 +13,14 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import { exercisesService } from '~/services/api/exercises/exercisesService'
+import type { loader } from '~/root'
+import {
+  exercisesService,
+  type ExerciseInsert
+} from '~/services/api/exercises/exercisesService'
 import { Constants, type Database } from '~/types/database.types'
 
 type Exercise = Database['public']['Tables']['exercises']['Row']
-type ExerciseInsert = Database['public']['Tables']['exercises']['Insert']
 
 const difficulties = Constants.public.Enums.difficulty_level
 
@@ -29,6 +32,7 @@ const linkSchema = z
   })
 
 const schema = z.object({
+  user_id: z.string(),
   name: z.string().min(1),
   description: z.string().nullable(),
   muscle_group: z.array(z.string()).nullable(),
@@ -120,6 +124,8 @@ const formFields: FormField[] = [
 ]
 
 export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
+  const { user } = useLoaderData<typeof loader>()
+
   const navigate = useNavigate()
   const {
     register,
@@ -129,6 +135,7 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      user_id: user?.id,
       name: exercise?.name || '',
       description: exercise?.description || null,
       muscle_group: exercise?.muscle_group || null,
@@ -143,6 +150,7 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   const onSubmit = async (data: FormData) => {
     try {
       const exerciseData: ExerciseInsert = {
+        user_id: data.user_id,
         name: data.name,
         description: data.description,
         muscle_group: data.muscle_group,
@@ -156,7 +164,7 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
       if (exercise?.id) {
         await exercisesService.updateExercise(exercise.id, exerciseData)
       } else {
-        await exercisesService.createExercise(exerciseData)
+        await exercisesService.insertExercise(exerciseData)
       }
       navigate('/dashboard/exercises')
     } catch (error) {

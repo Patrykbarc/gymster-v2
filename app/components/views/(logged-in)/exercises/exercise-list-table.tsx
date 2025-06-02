@@ -1,5 +1,5 @@
 import { Edit, Trash2 } from 'lucide-react'
-import { Link } from 'react-router'
+import { Link, useLoaderData } from 'react-router'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,7 +21,8 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-import type { Database } from '~/types/database.types'
+import type { loader } from '~/routes/(logged-in)/exercises/exercises'
+import { exercisesService } from '~/services/api/exercises/exercisesService'
 
 const exercises = [
   {
@@ -74,18 +75,12 @@ const exercises = [
   }
 ]
 
-type ExerciseList = Database['public']['Tables']['exercises']['Row'][]
+export function ExerciseListTable() {
+  const { exercises } = useLoaderData<typeof loader>()
 
-export function ExerciseListTable({
-  exerciseList
-}: {
-  exerciseList: ExerciseList
-}) {
-  // const [exerciseList, setExerciseList] = useState(exercises)
-
-  // const handleDelete = (id: string) => {
-  //   setExerciseList(exerciseList.filter((exercise) => exercise.id !== id))
-  // }
+  const handleDelete = async (id: string) => {
+    await exercisesService.deleteExercise(id)
+  }
 
   return (
     <Table>
@@ -100,7 +95,7 @@ export function ExerciseListTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {exerciseList.map((exercise) => (
+        {exercises.map((exercise) => (
           <TableRow key={exercise.id}>
             <TableCell className="font-medium">{exercise.name}</TableCell>
             <TableCell className="hidden md:table-cell">
@@ -141,7 +136,7 @@ export function ExerciseListTable({
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
                       <AlertDialogAction
-                      // onClick={() => handleDelete(exercise.id)}
+                        onClick={() => handleDelete(exercise.id)}
                       >
                         Delete
                       </AlertDialogAction>
