@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react'
-import { useLoaderData } from 'react-router'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -11,7 +11,7 @@ import { Input } from '~/components/ui/input'
 import { ExerciseListTable } from '~/components/views/(logged-in)/exercises/exercise-list-table'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
   const exercises = await exercisesService.getExercises()
   return { exercises }
 }
