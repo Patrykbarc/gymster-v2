@@ -24,6 +24,10 @@ export default [
       './routes/(logged-in)/exercises/new-exercise.tsx'
     ),
     route(
+      'dashboard/exercises/edit/:exerciseId',
+      './routes/(logged-in)/exercises/edit-exercise.tsx'
+    ),
+    route(
       'dashboard/workout-plans',
       './routes/(logged-in)/workout/workout-plans.tsx'
     ),

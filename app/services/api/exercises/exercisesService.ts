@@ -1,4 +1,4 @@
-import type { User } from '@supabase/supabase-js'
+import type { PostgrestError, User } from '@supabase/supabase-js'
 import { client } from '~/supabase/client'
 import { server } from '~/supabase/server'
 import type { Database } from '~/types/database.types'
@@ -14,7 +14,18 @@ export const exercisesService = {
       .supabase.from('exercises')
       .select('*')
     if (error) {
-      throw new Error(error.message)
+      handleError(error)
+    }
+    return data
+  },
+
+  getExercise: async (request: Request, id: string) => {
+    const { data, error } = await server(request)
+      .supabase.from('exercises')
+      .select('*')
+      .eq('id', id)
+    if (error) {
+      handleError(error)
     }
     return data
   },
@@ -25,7 +36,7 @@ export const exercisesService = {
       .insert(exercise)
       .select()
     if (error) {
-      throw new Error(error.message)
+      handleError(error)
     }
     return data
   },
@@ -36,7 +47,7 @@ export const exercisesService = {
       .update(exercise)
       .eq('id', id)
     if (error) {
-      throw new Error(error.message)
+      handleError(error)
     }
     return data
   },
@@ -44,8 +55,14 @@ export const exercisesService = {
   deleteExercise: async (id: string) => {
     const { data, error } = await client.from('exercises').delete().eq('id', id)
     if (error) {
-      throw new Error(error.message)
+      handleError(error)
     }
     return data
+  }
+}
+
+function handleError(error: PostgrestError | null) {
+  if (error) {
+    console.error(error.message)
   }
 }

@@ -64,7 +64,7 @@ export function ExerciseListTable() {
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="icon" asChild>
-                  <Link to={`/exercises/${exercise.id}/edit`}>
+                  <Link to={`edit/${exercise.id}`}>
                     <Edit className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Link>
