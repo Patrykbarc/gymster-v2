@@ -20,7 +20,8 @@ create policy "Users can update own profile"
     using (auth.uid() = id);
 
 create policy "Enable users to view their own data only"
-    on exercises for select
+    on exercises
+    for SELECT
     to authenticated
     using (user_id = auth.uid());
 
@@ -42,12 +43,12 @@ create policy "Enable delete for users based on user_id"
         (select auth.uid()) = user_id
     );
 
-create policy "Enable insert for users based on user_id"
-    on "public"."exercises"
+create policy "Enable update for users based on user_id"
+    on exercises
     as PERMISSIVE
-    for INSERT
+    for UPDATE
     to public
-    with check (
+    using (
         (select auth.uid()) = user_id
     )
 

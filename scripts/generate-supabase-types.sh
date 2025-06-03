@@ -9,6 +9,6 @@ if [ -z "$PROJECT_REF" ]; then
     exit 1
 fi
 
-npx supabase gen types typescript --project-id $PROJECT_REF --schema public > $DESTINATION_PATH
+npx -y supabase gen types typescript --project-id $PROJECT_REF --schema public > $DESTINATION_PATH
 
 echo "Database types generated successfully in $DESTINATION_PATH"

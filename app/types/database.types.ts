@@ -72,9 +72,11 @@ export type Database = {
           id: string
           image_url: string | null
           instructions: string[] | null
+          is_public: boolean | null
           muscle_group: string[] | null
           name: string
           updated_at: string
+          user_id: string | null
           video_url: string | null
         }
         Insert: {
@@ -85,9 +87,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructions?: string[] | null
+          is_public?: boolean | null
           muscle_group?: string[] | null
           name: string
           updated_at?: string
+          user_id?: string | null
           video_url?: string | null
         }
         Update: {
@@ -98,9 +102,11 @@ export type Database = {
           id?: string
           image_url?: string | null
           instructions?: string[] | null
+          is_public?: boolean | null
           muscle_group?: string[] | null
           name?: string
           updated_at?: string
+          user_id?: string | null
           video_url?: string | null
         }
         Relationships: []
