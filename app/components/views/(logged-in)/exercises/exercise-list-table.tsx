@@ -1,4 +1,4 @@
-import { Edit, Trash2 } from 'lucide-react'
+import { ChevronDown, Edit, Trash2 } from 'lucide-react'
 import { Link, useLoaderData, useRevalidator } from 'react-router'
 import {
   AlertDialog,
@@ -46,11 +46,21 @@ export function ExerciseListTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {exercises.map((exercise) => (
+        {exercises?.map((exercise) => (
           <TableRow key={exercise.id}>
             <TableCell className="font-medium">{exercise.name}</TableCell>
-            <TableCell className="hidden md:table-cell">
-              {exercise.description}
+            <TableCell
+              className="relative hidden min-w-[350px] max-w-[600px] overflow-hidden truncate whitespace-break-spaces md:block"
+              style={{ height: '200px' }}
+            >
+              <span className="block">{exercise.description}</span>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute bottom-0 right-0"
+              >
+                <ChevronDown className="h-4 w-4" />
+              </Button>
             </TableCell>
             <TableCell>
               {exercise.muscle_group?.map((muscle) => (
@@ -59,7 +69,13 @@ export function ExerciseListTable() {
                 </Badge>
               ))}
             </TableCell>
-            <TableCell>{exercise.equipment}</TableCell>
+            <TableCell>
+              {exercise.equipment?.map((equipment) => (
+                <Badge variant="outline" key={equipment}>
+                  {equipment}
+                </Badge>
+              ))}
+            </TableCell>
             <TableCell>{exercise.difficulty}</TableCell>
             <TableCell className="text-right">
               <div className="flex justify-end gap-2">
