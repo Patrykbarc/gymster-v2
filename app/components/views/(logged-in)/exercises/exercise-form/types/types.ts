@@ -1,12 +1,20 @@
-import type { z } from 'zod'
 import type { Database } from '~/types/database.types'
-import type { schema } from './schema'
 
 type Exercise = Database['public']['Tables']['exercises']['Row']
 
-export type FormData = z.infer<typeof schema>
+export type FormData = {
+  name: string
+  description: string | null
+  muscle_group: string | null
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
+  equipment: string | null
+  instructions: string | null
+  video_url: string | null
+  image_url: string | null
+}
 
 export type ExerciseFormProps = {
+  userId: string
   exercise?: Exercise | null
 }
 

@@ -12,7 +12,7 @@ export const authService = {
 
     const user_id = data?.user?.id
 
-    return { user_id, error }
+    return { session: { user_id }, error }
   },
 
   signUp: async (

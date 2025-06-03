@@ -1,5 +1,5 @@
-import { redirect } from 'react-router'
 import type { LoaderFunctionArgs } from 'react-router'
+import { redirect, useLoaderData } from 'react-router'
 import {
   Card,
   CardContent,
@@ -11,7 +11,9 @@ import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-
 import { authService } from '~/services/api/auth/authService'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const { user_id } = await authService.getUser(request)
+  const {
+    session: { user_id }
+  } = await authService.getUser(request)
 
   if (!user_id) {
     return redirect('/login')
@@ -21,26 +23,19 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export default function NewExercisePage() {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Add New Exercise</h1>
-        <p className="text-muted-foreground">
-          Create a new exercise for your workout plans
-        </p>
-      </div>
+  const { user_id } = useLoaderData<typeof loader>()
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Exercise Details</CardTitle>
-          <CardDescription>
-            Fill in the details for your new exercise
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ExerciseForm />
-        </CardContent>
-      </Card>
-    </div>
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Exercise Details</CardTitle>
+        <CardDescription>
+          Fill in the details for your new exercise
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ExerciseForm userId={user_id} />
+      </CardContent>
+    </Card>
   )
 }

@@ -11,12 +11,12 @@ const linkSchema = z
   })
 
 export const schema = z.object({
-  name: z.string().min(1),
+  name: z.string().min(1, { message: 'Name is required' }),
   description: z.string().nullable(),
-  muscle_group: z.array(z.string()).nullable(),
+  muscle_group: z.string().nullable(),
   difficulty: z.enum(difficulties),
-  equipment: z.array(z.string()).nullable(),
-  instructions: z.array(z.string()).nullable(),
+  equipment: z.string().nullable(),
+  instructions: z.string().nullable(),
   video_url: linkSchema,
   image_url: linkSchema
 })
