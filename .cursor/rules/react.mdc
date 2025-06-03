@@ -1,9 +1,4 @@
 ---
-description: 
-globs: 
-alwaysApply: true
----
----
 description: RPC Service boilerplate
 globs: *.tsx
 alwaysApply: true
@@ -11,8 +6,3 @@ alwaysApply: true
 
 - Never use Remix libraries, use instead react-router
 - Never use "use client" and Next.js related directives
-
-
-
-
-
