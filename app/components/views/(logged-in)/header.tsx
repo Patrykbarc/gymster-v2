@@ -33,6 +33,19 @@ const getHeaderData: HeaderDataStructure = {
       href: 'exercises/new'
     }
   },
+  '/dashboard/exercises/new': {
+    title: 'New Exercise',
+    description: 'Fill in the details for your new exercise',
+    button: {
+      icon: <Plus />,
+      text: 'Add Exercise',
+      href: 'exercises/new'
+    }
+  },
+  '/dashboard/exercises/edit/:exerciseId': {
+    title: 'Edit Exercise',
+    description: 'Edit the details for your exercise'
+  },
   '/dashboard/workout-plans': {
     title: 'Workout Plans',
     description: 'Create, edit, and manage your workout plans',
@@ -46,6 +59,10 @@ const getHeaderData: HeaderDataStructure = {
     title: 'New Workout Plan',
     description: 'Create a new workout plan'
   },
+  '/dashboard/workout-plans/edit/:id': {
+    title: 'Edit Workout Plan',
+    description: 'Edit the details for your workout plan'
+  },
   '/dashboard/start-workout': {
     title: 'Start Workout',
     description: 'Begin a new workout session'
@@ -55,8 +72,10 @@ const getHeaderData: HeaderDataStructure = {
 export function Header() {
   const match = useMatches()
   const pathname = match[match.length - 1].pathname
-  const current = match.find((match) => match.pathname === pathname)
-  const header = current ? getHeaderData[current.pathname] : null
+
+  const header = Object.entries(getHeaderData).find(([pattern]) =>
+    matchPath(pattern, pathname)
+  )?.[1]
 
   if (!header) return null
 
@@ -78,4 +97,20 @@ export function Header() {
       </div>
     </nav>
   )
+}
+
+function matchPath(pattern: string, pathname: string): boolean {
+  const patternParts = pattern.split('/')
+  const pathParts = pathname.split('/')
+
+  if (patternParts.length !== pathParts.length) {
+    return false
+  }
+
+  return patternParts.every((part, index) => {
+    if (part.startsWith(':')) {
+      return true
+    }
+    return part === pathParts[index]
+  })
 }
