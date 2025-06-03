@@ -28,7 +28,37 @@ export const links: Route.LinksFunction = () => [
   }
 ]
 
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url)
+  const publicUrls = ['/login', '/register']
+
+  const {
+    session: { user_id }
+  } = await authService.getUser(request)
+
+  if (url.pathname === '/') {
+    return redirect('/login')
+  }
+
+  if (user_id && publicUrls.includes(url.pathname)) {
+    return redirect('/dashboard')
+  }
+
+  if (publicUrls.includes(url.pathname)) {
+    return { user: null }
+  }
+
+  if (!user_id) {
+    return redirect('/login')
+  }
+
+  return { user_id }
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  useLoaderData<typeof loader>()
+  useAuthStateChange()
+
   return (
     <html lang="en">
       <head>
@@ -47,31 +77,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   )
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const url = new URL(request.url)
-  const publicUrls = ['/login', '/register']
-
-  const { user_id } = await authService.getUser(request)
-
-  if (user_id && publicUrls.includes(url.pathname)) {
-    return redirect('/dashboard')
-  }
-
-  if (publicUrls.includes(url.pathname)) {
-    return { user: null }
-  }
-
-  if (!user_id) {
-    return redirect('/login')
-  }
-
-  return { user_id }
-}
-
 export default function App() {
-  useLoaderData<typeof loader>()
-  useAuthStateChange()
-
   return <Outlet />
 }
 
