@@ -19,19 +19,37 @@ create policy "Users can update own profile"
     on profiles for update
     using (auth.uid() = id);
 
-create policy "Exercises are viewable by everyone"
+create policy "Enable users to view their own data only"
     on exercises for select
-    using (true);
+    to authenticated
+    using (user_id = auth.uid());
 
-create policy "Only admins can modify exercises"
-    on exercises for all
-    using (
-        exists (
-            select 1 from profiles
-            where profiles.id = auth.uid()
-            and profiles.role = 'admin'
-        )
+create policy "Enable insert for authenticated users only"
+    on exercises
+    as PERMISSIVE
+    for INSERT
+    to authenticated
+    with check (
+        TRUE
     );
+
+create policy "Enable delete for users based on user_id"
+    on exercises
+    as PERMISSIVE
+    for DELETE
+    to public
+    using (
+        (select auth.uid()) = user_id
+    );
+
+create policy "Enable insert for users based on user_id"
+    on "public"."exercises"
+    as PERMISSIVE
+    for INSERT
+    to public
+    with check (
+        (select auth.uid()) = user_id
+    )
 
 create policy "Workouts are viewable by everyone if public"
     on workouts for select
