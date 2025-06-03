@@ -5,12 +5,12 @@ import { Header } from '~/components/views/(logged-in)/header'
 
 export default function DashboardLayout() {
   return (
-    <main className="min-h-dvh">
+    <main>
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger className="fixed right-0 p-6 md:hidden" />
 
-        <div className="flex w-full flex-col">
+        <div className="grid h-screen w-full grid-rows-[auto_1fr]">
           <Header />
           <div className="p-6">
             <Outlet />

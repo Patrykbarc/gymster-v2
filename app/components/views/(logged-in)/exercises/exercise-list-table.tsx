@@ -94,18 +94,22 @@ export function ExerciseListTable() {
               )}
             </TableCell>
             <TableCell>
-              {exercise.muscle_group?.map((muscle) => (
-                <Badge variant="outline" key={muscle}>
-                  {muscle}
-                </Badge>
-              ))}
+              <div className="flex flex-wrap gap-1">
+                {exercise.muscle_group?.map((muscle) => (
+                  <Badge variant="outline" key={muscle}>
+                    {muscle}
+                  </Badge>
+                ))}
+              </div>
             </TableCell>
             <TableCell>
-              {exercise.equipment?.map((equipment) => (
-                <Badge variant="outline" key={equipment}>
-                  {equipment}
-                </Badge>
-              ))}
+              <div className="flex flex-wrap gap-1">
+                {exercise.equipment?.map((equipment) => (
+                  <Badge variant="outline" key={equipment}>
+                    {equipment}
+                  </Badge>
+                ))}
+              </div>
             </TableCell>
             <TableCell>{exercise.difficulty}</TableCell>
             <TableCell className="text-right">
