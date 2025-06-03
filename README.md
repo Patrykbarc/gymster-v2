@@ -8,6 +8,9 @@ A gym and workout management application.
 - Supabase account
 - Node package manager (pnpm recommended)
 
+> ⚠️ **NOTE**<br/>
+> If you are using a package manager other than **pnpm**, make sure to update the package.json scripts to your preferred manager.
+
 ## Getting Started
 
 ### 1. Install Dependencies
@@ -48,9 +51,11 @@ The application will be available at `http://localhost:5173`.
 - `pnpm dev` - starts development server
 - `pnpm build` - builds the application for production
 - `pnpm start` - runs the built application
+- `pnpm typecheck` - runs the type checking tool
 - `pnpm lint` - runs the linter
-- `pnpm format` - formats the code
-- `pnpm test` - runs tests
+- `pnpm prettier` - formats the code
+- `pnpm ese:codegen` - runs playwright code generator
+- `pnpm e2e:test` - runs end-to-end tests
 - `pnpm db:generate-types` - generates the database types
 
 ## Commit Convention
