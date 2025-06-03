@@ -1,6 +1,6 @@
 import type { Database } from '~/types/database.types'
 
-type Exercise = Database['public']['Tables']['exercises']['Row']
+export type Exercises = Database['public']['Tables']['exercises']['Row']
 
 export type FormData = {
   name: string
@@ -15,7 +15,7 @@ export type FormData = {
 
 export type ExerciseFormProps = {
   userId: string
-  exercise?: Exercise | null
+  exercise?: Exercises | null
 }
 
 export type FormField = {
