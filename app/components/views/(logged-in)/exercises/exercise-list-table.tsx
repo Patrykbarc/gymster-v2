@@ -1,4 +1,5 @@
 import { ChevronDown, Edit, Trash2 } from 'lucide-react'
+import { useRef, useState } from 'react'
 import { Link, useLoaderData, useRevalidator } from 'react-router'
 import {
   AlertDialog,
@@ -12,7 +13,7 @@ import {
   AlertDialogTrigger
 } from '~/components/ui/alert-dialog'
 import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Button, buttonVariants } from '~/components/ui/button'
 import {
   Table,
   TableBody,
@@ -21,16 +22,25 @@ import {
   TableHeader,
   TableRow
 } from '~/components/ui/table'
+import { cn } from '~/lib/utils'
 import type { loader } from '~/routes/(logged-in)/exercises/exercises'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 
 export function ExerciseListTable() {
   const { exercises } = useLoaderData<typeof loader>()
   const { revalidate } = useRevalidator()
+  const [expandedExercise, setExpandedExercise] = useState<string | null>(null)
+  const descriptionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
 
   const handleDelete = async (id: string) => {
     await exercisesService.deleteExercise(id)
     revalidate()
+  }
+
+  const toggleDescription = (exerciseId: string) => {
+    setExpandedExercise((current) =>
+      current === exerciseId ? null : exerciseId
+    )
   }
 
   return (
@@ -49,18 +59,39 @@ export function ExerciseListTable() {
         {exercises?.map((exercise) => (
           <TableRow key={exercise.id}>
             <TableCell className="font-medium">{exercise.name}</TableCell>
-            <TableCell
-              className="relative hidden min-w-[350px] max-w-[600px] overflow-hidden truncate whitespace-break-spaces md:block"
-              style={{ height: '200px' }}
-            >
-              <span className="block">{exercise.description}</span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute bottom-0 right-0"
-              >
-                <ChevronDown className="h-4 w-4" />
-              </Button>
+            <TableCell className="relative hidden min-w-[350px] max-w-[600px] md:table-cell">
+              {exercise.description && (
+                <div className="relative">
+                  <div
+                    ref={(el) => {
+                      if (el) descriptionRefs.current[exercise.id] = el
+                    }}
+                    className={cn(
+                      'mt-1.5 overflow-hidden whitespace-break-spaces transition-[max-height] duration-300 ease-in-out',
+                      expandedExercise === exercise.id
+                        ? 'max-h-[1000px]'
+                        : 'relative max-h-[80px] overflow-hidden text-ellipsis after:absolute after:bottom-0 after:left-0 after:h-8 after:w-full after:bg-gradient-to-t after:from-white after:to-transparent after:content-[""]'
+                    )}
+                  >
+                    <p className="pr-8">{exercise.description}</p>
+                  </div>
+                  <button
+                    onClick={() => toggleDescription(exercise.id)}
+                    className={cn(
+                      buttonVariants({ variant: 'ghost', size: 'icon' }),
+                      'absolute right-0 top-0 size-6 transition-transform duration-300',
+                      expandedExercise === exercise.id && 'rotate-180'
+                    )}
+                    aria-label={
+                      expandedExercise === exercise.id
+                        ? 'Collapse description'
+                        : 'Expand description'
+                    }
+                  >
+                    <ChevronDown className={cn('size-4')} />
+                  </button>
+                </div>
+              )}
             </TableCell>
             <TableCell>
               {exercise.muscle_group?.map((muscle) => (
