@@ -1,17 +1,19 @@
 import { client } from '~/supabase/client'
+import { server } from '~/supabase/server'
 import type { Database } from '~/types/database.types'
 
-export type ExerciseInsert =
-  Database['public']['Tables']['exercises']['Insert'] & {
-    user_id: string
-  }
+export type ExerciseInsert = Database['public']['Tables']['exercises']['Insert']
+
 export const exercisesService = {
-  getExercises: async () => {
-    const { data, error } = await client.from('exercises').select('*')
-    console.log(data, error)
+  getExercises: async (request: Request) => {
+    const { data, error } = await server(request)
+      .supabase.from('exercises')
+      .select('*')
+
     if (error) {
       throw new Error(error.message)
     }
+
     return data
   },
 
