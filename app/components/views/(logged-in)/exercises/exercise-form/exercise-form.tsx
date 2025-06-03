@@ -1,7 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router'
-import { z } from 'zod'
+import { Form, useLoaderData, useNavigate } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -13,51 +12,13 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
+import type { loader } from '~/routes/(logged-in)/exercises/new-exercise'
 import {
   exercisesService,
   type ExerciseInsert
 } from '~/services/api/exercises/exercisesService'
-import { Constants, type Database } from '~/types/database.types'
-
-type Exercise = Database['public']['Tables']['exercises']['Row']
-
-const difficulties = Constants.public.Enums.difficulty_level
-
-const linkSchema = z
-  .string()
-  .nullable()
-  .refine((val) => !val || val.match(/^https?:\/\/.+/), {
-    message: 'Must be a valid URL'
-  })
-
-const schema = z.object({
-  name: z.string().min(1),
-  description: z.string().nullable(),
-  muscle_group: z.array(z.string()).nullable(),
-  difficulty: z.enum(difficulties),
-  equipment: z.array(z.string()).nullable(),
-  instructions: z.array(z.string()).nullable(),
-  video_url: linkSchema,
-  image_url: linkSchema
-})
-
-type FormData = z.infer<typeof schema>
-
-type ExerciseFormProps = {
-  exercise?: Exercise | null
-}
-
-type FormField = {
-  id: keyof FormData
-  label: string
-  type: 'text' | 'textarea' | 'select' | 'url'
-  placeholder: string
-  required?: boolean
-  options?: readonly string[]
-  rows?: number
-  isArray?: boolean
-  arraySeparator?: 'comma' | 'newline'
-}
+import { difficulties, schema } from './schema'
+import type { ExerciseFormProps, FormData, FormField } from './types'
 
 const formFields: FormField[] = [
   {
@@ -122,6 +83,7 @@ const formFields: FormField[] = [
 ]
 
 export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
+  const { user_id } = useLoaderData<typeof loader>()
   const navigate = useNavigate()
   const {
     register,
@@ -145,6 +107,7 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   const onSubmit = async (data: FormData) => {
     try {
       const exerciseData: ExerciseInsert = {
+        user_id,
         name: data.name,
         description: data.description,
         muscle_group: data.muscle_group,
@@ -229,7 +192,7 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <Form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {formFields.map((field) => (
         <div key={field.id} className="space-y-2">
           <Label htmlFor={field.id}>
@@ -255,6 +218,6 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
           {exercise ? 'Update Exercise' : 'Create Exercise'}
         </Button>
       </div>
-    </form>
+    </Form>
   )
 }

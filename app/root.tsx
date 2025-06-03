@@ -51,12 +51,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url)
   const publicUrls = ['/login', '/register']
 
-  const {
-    data: { user },
-    error
-  } = await authService.getUser(request)
+  const { user_id } = await authService.getUser(request)
 
-  if (user && publicUrls.includes(url.pathname)) {
+  if (user_id && publicUrls.includes(url.pathname)) {
     return redirect('/dashboard')
   }
 
@@ -64,11 +61,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     return { user: null }
   }
 
-  if (!user) {
+  if (!user_id) {
     return redirect('/login')
   }
 
-  return { user }
+  return { user_id }
 }
 
 export default function App() {

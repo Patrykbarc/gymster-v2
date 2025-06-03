@@ -1,3 +1,5 @@
+import { redirect } from 'react-router'
+import type { LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -5,7 +7,18 @@ import {
   CardHeader,
   CardTitle
 } from '~/components/ui/card'
-import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form'
+import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form/exercise-form'
+import { authService } from '~/services/api/auth/authService'
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const { user_id } = await authService.getUser(request)
+
+  if (!user_id) {
+    return redirect('/login')
+  }
+
+  return { user_id }
+}
 
 export default function NewExercisePage() {
   return (

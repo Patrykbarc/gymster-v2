@@ -1,5 +1,5 @@
 import { Edit, Trash2 } from 'lucide-react'
-import { Link, useLoaderData } from 'react-router'
+import { Link, useLoaderData, useRevalidator } from 'react-router'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,9 +26,11 @@ import { exercisesService } from '~/services/api/exercises/exercisesService'
 
 export function ExerciseListTable() {
   const { exercises } = useLoaderData<typeof loader>()
+  const { revalidate } = useRevalidator()
 
   const handleDelete = async (id: string) => {
     await exercisesService.deleteExercise(id)
+    revalidate()
   }
 
   return (

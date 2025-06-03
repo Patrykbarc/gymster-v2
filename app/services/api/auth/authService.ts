@@ -4,7 +4,15 @@ import type { UserRegistrationData } from './types'
 
 export const authService = {
   getUser: async (request: Request) => {
-    return await server(request).supabase.auth.getUser()
+    const { data, error } = await server(request).supabase.auth.getUser()
+
+    if (error) {
+      console.error(error.message)
+    }
+
+    const user_id = data?.user?.id
+
+    return { user_id, error }
   },
 
   signUp: async (
