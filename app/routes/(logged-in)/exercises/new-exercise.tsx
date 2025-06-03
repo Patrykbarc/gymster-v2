@@ -1,4 +1,3 @@
-import { type LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -7,16 +6,7 @@ import {
   CardTitle
 } from '~/components/ui/card'
 import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form'
-import { authService } from '~/services/api/auth/authService'
 
-export async function loader({ request }: LoaderFunctionArgs) {
-  const {
-    data: { user },
-    error
-  } = await authService.getUser(request)
-
-  return { user }
-}
 export default function NewExercisePage() {
   return (
     <div className="space-y-6">

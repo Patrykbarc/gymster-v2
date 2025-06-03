@@ -24,57 +24,6 @@ import {
 import type { loader } from '~/routes/(logged-in)/exercises/exercises'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 
-const exercises = [
-  {
-    id: '1',
-    name: 'Bench Press',
-    description: 'Compound chest exercise',
-    muscleCategory: 'Chest'
-  },
-  {
-    id: '2',
-    name: 'Squat',
-    description: 'Compound lower body exercise',
-    muscleCategory: 'Legs'
-  },
-  {
-    id: '3',
-    name: 'Deadlift',
-    description: 'Compound back exercise',
-    muscleCategory: 'Back'
-  },
-  {
-    id: '4',
-    name: 'Pull-up',
-    description: 'Upper body pulling exercise',
-    muscleCategory: 'Back'
-  },
-  {
-    id: '5',
-    name: 'Shoulder Press',
-    description: 'Compound shoulder exercise',
-    muscleCategory: 'Shoulders'
-  },
-  {
-    id: '6',
-    name: 'Bicep Curl',
-    description: 'Isolation exercise for biceps',
-    muscleCategory: 'Arms'
-  },
-  {
-    id: '7',
-    name: 'Tricep Extension',
-    description: 'Isolation exercise for triceps',
-    muscleCategory: 'Arms'
-  },
-  {
-    id: '8',
-    name: 'Leg Press',
-    description: 'Machine-based leg exercise',
-    muscleCategory: 'Legs'
-  }
-]
-
 export function ExerciseListTable() {
   const { exercises } = useLoaderData<typeof loader>()
 

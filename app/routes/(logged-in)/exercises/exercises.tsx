@@ -9,24 +9,19 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { ExerciseListTable } from '~/components/views/(logged-in)/exercises/exercise-list-table'
-import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 import type { Database } from '~/types/database.types'
 
 type ExerciseList = Database['public']['Tables']['exercises']['Row'][]
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const {
-    data: { user }
-  } = await authService.getUser(request)
+  const exercises: ExerciseList = await exercisesService.getExercises(request)
 
-  const exercises: ExerciseList = await exercisesService.getExercises()
-  console.log(exercises)
-  return { exercises, user }
+  return { exercises, request }
 }
 
 export default function Exercises() {
-  const { exercises, user } = useLoaderData<typeof loader>()
+  const { exercises } = useLoaderData<typeof loader>()
 
   if (exercises.length === 0) {
     return (

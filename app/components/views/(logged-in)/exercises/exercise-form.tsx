@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useLoaderData, useNavigate } from 'react-router'
+import { useNavigate } from 'react-router'
 import { z } from 'zod'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -13,7 +13,6 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import type { loader } from '~/root'
 import {
   exercisesService,
   type ExerciseInsert
@@ -32,7 +31,6 @@ const linkSchema = z
   })
 
 const schema = z.object({
-  user_id: z.string(),
   name: z.string().min(1),
   description: z.string().nullable(),
   muscle_group: z.array(z.string()).nullable(),
@@ -124,8 +122,6 @@ const formFields: FormField[] = [
 ]
 
 export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
-  const { user } = useLoaderData<typeof loader>()
-
   const navigate = useNavigate()
   const {
     register,
@@ -135,7 +131,6 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      user_id: user?.id,
       name: exercise?.name || '',
       description: exercise?.description || null,
       muscle_group: exercise?.muscle_group || null,
@@ -150,7 +145,6 @@ export function ExerciseForm({ exercise = null }: ExerciseFormProps) {
   const onSubmit = async (data: FormData) => {
     try {
       const exerciseData: ExerciseInsert = {
-        user_id: data.user_id,
         name: data.name,
         description: data.description,
         muscle_group: data.muscle_group,
