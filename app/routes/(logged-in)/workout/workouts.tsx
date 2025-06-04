@@ -9,7 +9,7 @@ import {
 import { Input } from '~/components/ui/input'
 import { WorkoutPlanList } from '~/components/views/(logged-in)/workout/workout-plan-list'
 
-export default function WorkoutPlansPage() {
+export default function WorkoutsPage() {
   return (
     <>
       <div className="space-y-6">

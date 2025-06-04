@@ -45,7 +45,7 @@ export function WorkoutPlanForm({ plan = null }: WorkoutPlanFormProps) {
     e.preventDefault()
     console.log('Saving workout plan:', { ...formData, exercises })
 
-    navigate('/dashboard/workout-plans')
+    navigate('/dashboard/workouts')
   }
 
   return (

@@ -86,7 +86,7 @@ export function WorkoutPlanList() {
                   </Link>
                 </Button>
                 <Button variant="ghost" size="icon" asChild>
-                  <Link to={`/workout-plans/${plan.id}/edit`}>
+                  <Link to={`/workouts/${plan.id}/edit`}>
                     <Edit className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Link>

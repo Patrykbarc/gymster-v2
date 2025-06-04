@@ -17,8 +17,8 @@ test('successful login redirects to dashboard', async ({ page }) => {
 
   // Verify we can access protected route
   await page.getByRole('link', { name: 'Workout plans' }).click()
-  await page.waitForURL('**/workout-plans')
-  expect(page.url()).toContain('/workout-plans')
+  await page.waitForURL('**/workouts')
+  expect(page.url()).toContain('/workouts')
 })
 
 test('unauthenticated user is redirected to login', async ({ page }) => {

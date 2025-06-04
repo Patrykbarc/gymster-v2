@@ -35,7 +35,7 @@ const items = [
   },
   {
     title: 'Workout plans',
-    url: '/dashboard/workout-plans',
+    url: '/dashboard/workouts',
     icon: ClipboardList
   },
   {

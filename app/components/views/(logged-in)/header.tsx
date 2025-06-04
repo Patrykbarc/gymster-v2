@@ -46,20 +46,20 @@ const getHeaderData: HeaderDataStructure = {
     title: 'Edit Exercise',
     description: 'Edit the details for your exercise'
   },
-  '/dashboard/workout-plans': {
+  '/dashboard/workouts': {
     title: 'Workout Plans',
     description: 'Create, edit, and manage your workout plans',
     button: {
       icon: <Plus />,
-      text: 'Create Plan',
-      href: 'workout-plans/new'
+      text: 'Create Workout',
+      href: 'workouts/new'
     }
   },
-  '/dashboard/workout-plans/new': {
+  '/dashboard/workouts/new': {
     title: 'New Workout Plan',
     description: 'Create a new workout plan'
   },
-  '/dashboard/workout-plans/edit/:id': {
+  '/dashboard/workouts/edit/:id': {
     title: 'Edit Workout Plan',
     description: 'Edit the details for your workout plan'
   },

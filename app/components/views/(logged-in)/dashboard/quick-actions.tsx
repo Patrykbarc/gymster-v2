@@ -18,7 +18,7 @@ const links = [
   {
     label: 'Create Workout Plan',
     icon: Plus,
-    to: '/dashboard/workout-plans/new'
+    to: '/dashboard/workouts/new'
   },
   {
     label: 'Start New Workout',
