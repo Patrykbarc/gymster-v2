@@ -31,6 +31,7 @@ module.exports = {
     'react/prop-types': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'warn',
-    'prettier/prettier': 'error'
+    'prettier/prettier': 'error',
+    'no-empty-pattern': 'off'
   }
 }

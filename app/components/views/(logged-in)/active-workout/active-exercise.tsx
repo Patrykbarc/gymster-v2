@@ -23,14 +23,12 @@ type ActiveExerciseProps = {
     weight: number,
     reps: number
   ) => void
-  isActive: boolean
 }
 
 export function ActiveExercise({
   exercise,
   exerciseIndex,
-  onSetComplete,
-  isActive
+  onSetComplete
 }: ActiveExerciseProps) {
   const [setData, setSetData] = useState<Set[]>(
     exercise.sets.map((set: Set) => ({

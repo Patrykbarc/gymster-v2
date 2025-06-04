@@ -102,8 +102,8 @@ export function WorkoutPlanList() {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will permanently delete the workout plan "
-                        {plan.name}". This action cannot be undone.
+                        This will permanently delete the workout plan &quot;
+                        {plan.name}&quot;. This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

@@ -2,6 +2,7 @@ import type { User } from '@supabase/supabase-js'
 import { create } from 'zustand'
 import { authService } from '~/services/api/auth/authService'
 import type { UserRegistrationData } from '~/services/api/auth/types'
+import { handleApiError } from '~/utils/handleApiError'
 
 type AuthState = {
   user: User | null
@@ -28,10 +29,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         password,
         userData
       )
-      if (error) throw error
+      if (error) {
+        handleApiError(error)
+        throw error
+      }
       set({ user: data.user })
     } catch (error) {
-      console.error('Error signing up:', error)
+      handleApiError(error)
       throw error
     } finally {
       set({ isLoading: false })
@@ -45,9 +49,13 @@ export const useAuthStore = create<AuthState>((set) => ({
         email,
         password
       )
-      if (error) throw error
+      if (error) {
+        handleApiError(error)
+        throw error
+      }
       set({ user: data.user })
     } catch (error) {
+      handleApiError(error)
       throw error
     } finally {
       set({ isLoading: false })
@@ -59,6 +67,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       await authService.signInWithGoogle()
     } catch (error) {
+      handleApiError(error)
       throw error
     } finally {
       set({ isLoading: false })
@@ -71,7 +80,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authService.signOut()
       set({ user: null })
     } catch (error) {
-      console.error('Error signing out:', error)
+      handleApiError(error)
       throw error
     } finally {
       set({ isLoading: false })

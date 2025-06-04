@@ -60,7 +60,7 @@ export function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
     resolver: zodResolver(schema)
   })
 
-  const { signUp, isLoading } = useAuthStore()
+  const { signUp } = useAuthStore()
 
   async function onSubmit(data: Schema) {
     const response = await signUp(data.email, data.password, {

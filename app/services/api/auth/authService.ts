@@ -1,15 +1,9 @@
 import { client } from '~/supabase/client'
 import { server } from '~/supabase/server'
 import type { UserRegistrationData } from './types'
-
 export const authService = {
   getUser: async (request: Request) => {
     const { data, error } = await server(request).supabase.auth.getUser()
-
-    if (error) {
-      console.error(error.message)
-    }
-
     const user_id = data?.user?.id
 
     return { session: { user_id }, error }

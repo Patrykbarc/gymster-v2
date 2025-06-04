@@ -8,18 +8,7 @@ import {
   TableRow
 } from '~/components/ui/table'
 import type { loader } from '~/routes/(logged-in)/exercises/exercises'
-import type { Database } from '~/types/database.types'
 import { useExercisesTableConfig } from './exercise-form/hook/useExercisesTableConfig'
-
-type Exercises = Database['public']['Tables']['exercises']['Row']
-
-type TableConfig = {
-  header: {
-    name: string
-    className?: string
-  }
-  render: (exercise: Exercises) => React.ReactNode | string
-}
 
 export function ExerciseListTable() {
   const { exercises } = useLoaderData<typeof loader>()

@@ -65,7 +65,6 @@ export default function ActiveWorkoutPage() {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [workoutName, setWorkoutName] = useState('')
   const [exercises, setExercises] = useState<Exercise[]>([])
-  const [currentExerciseIndex, setCurrentExerciseIndex] = useState(0)
 
   useEffect(() => {
     if (planId && workoutPlans[planId as keyof typeof workoutPlans]) {
@@ -121,10 +120,6 @@ export default function ActiveWorkoutPage() {
     updatedExercises[exerciseIndex].completed = allSetsCompleted
 
     setExercises(updatedExercises)
-
-    if (allSetsCompleted && exerciseIndex < exercises.length - 1) {
-      setCurrentExerciseIndex(exerciseIndex + 1)
-    }
   }
 
   const handleFinishWorkout = () => {
@@ -193,7 +188,6 @@ export default function ActiveWorkoutPage() {
                 exercise={exercise}
                 exerciseIndex={index}
                 onSetComplete={handleSetComplete}
-                isActive={index === currentExerciseIndex}
               />
             </CardContent>
           </Card>
