@@ -8,7 +8,7 @@ import {
   TableRow
 } from '~/components/ui/table'
 import type { loader } from '~/routes/(logged-in)/exercises/exercises'
-import { useExercisesTableConfig } from './exercise-form/hook/useExercisesTableConfig'
+import { useExercisesTableConfig } from './hook/useExercisesTableConfig'
 
 export function ExerciseListTable() {
   const { exercises } = useLoaderData<typeof loader>()

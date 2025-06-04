@@ -1,5 +1,5 @@
 import { Badge } from '~/components/ui/badge'
-import type { Exercises } from '../types/types'
+import type { Exercises } from '../exercise-form/types/types'
 import {
   ActionCell,
   DefaultCell,
@@ -31,7 +31,7 @@ const tableConfig: TableConfig = {
     value: (exercise) => (
       <DescriptionCell
         exercise={exercise}
-        className="relative hidden min-w-[350px] max-w-[600px] md:table-cell"
+        className="relative hidden  md:table-cell"
       />
     )
   },

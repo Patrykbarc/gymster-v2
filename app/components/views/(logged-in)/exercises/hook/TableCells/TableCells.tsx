@@ -16,7 +16,7 @@ import { Button, buttonVariants } from '~/components/ui/button'
 import { TableCell } from '~/components/ui/table'
 import { cn } from '~/lib/utils'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
-import type { Exercises } from '../../types/types'
+import type { Exercises } from '../../exercise-form/types/types'
 
 type DefaultCellProps = {
   className?: string

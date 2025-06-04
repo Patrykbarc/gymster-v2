@@ -26,7 +26,7 @@ const getHeaderData: HeaderDataStructure = {
   },
   '/dashboard/exercises': {
     title: 'Exercises',
-    description: 'Browse, search, and manage your exercises',
+    description: 'Browse, search, and manage your exercises library',
     button: {
       icon: <Plus />,
       text: 'Add Exercise',
