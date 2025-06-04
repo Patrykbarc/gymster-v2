@@ -7,6 +7,7 @@ A gym and workout management application.
 - Node.js (version 18 or higher)
 - Supabase account
 - Node package manager (pnpm recommended)
+- Docker (for database migrations)
 
 > ⚠️ **NOTE**<br/>
 > If you are using a package manager other than **pnpm**, make sure to update the package.json scripts to your preferred manager.
@@ -34,6 +35,7 @@ Required environment variables:
 NEXT_PUBLIC_SUPABASE_URL=your-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+SUPABASE_DB_PASSWORD=your-supabase-db-password
 ```
 
 ### 3. Running the Application
@@ -57,6 +59,10 @@ The application will be available at `http://localhost:5173`.
 - `pnpm ese:codegen` - runs playwright code generator
 - `pnpm e2e:test` - runs end-to-end tests
 - `pnpm db:generate-types` - generates the database types
+- `pnpm db:pull` - pulls the database schema from Supabase
+
+> ℹ **NOTE**<br/>
+> To perform the `db:pull` command, you need to have Docker Daemon running.
 
 ## Commit Convention
 
