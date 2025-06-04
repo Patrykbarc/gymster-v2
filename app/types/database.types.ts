@@ -271,6 +271,7 @@ export type Database = {
           name: string
           type: Database['public']['Enums']['workout_type']
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           calories_burn?: number | null
@@ -284,6 +285,7 @@ export type Database = {
           name: string
           type: Database['public']['Enums']['workout_type']
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           calories_burn?: number | null
@@ -297,6 +299,7 @@ export type Database = {
           name?: string
           type?: Database['public']['Enums']['workout_type']
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
