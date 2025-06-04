@@ -1,4 +1,5 @@
 import { Search } from 'lucide-react'
+import { type LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -8,6 +9,13 @@ import {
 } from '~/components/ui/card'
 import { Input } from '~/components/ui/input'
 import { WorkoutPlanList } from '~/components/views/(logged-in)/workout/workout-plan-list'
+import { workoutsService } from '~/services/api/workouts/workoutsService'
+
+export async function loader({ request }: LoaderFunctionArgs) {
+  const workouts = await workoutsService.getWorkouts(request)
+
+  return { workouts }
+}
 
 export default function WorkoutsPage() {
   return (

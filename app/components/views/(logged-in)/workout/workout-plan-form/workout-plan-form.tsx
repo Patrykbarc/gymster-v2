@@ -1,5 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { z } from 'zod'
 import type { Exercise } from '~/components/shared/exercise-list/_types/types'
 import { ExerciseList } from '~/components/shared/exercise-list/exercise-list'
 import { Button } from '~/components/ui/button'
@@ -26,39 +29,53 @@ const availableExercises = [
   { id: '8', name: 'Leg Press', muscleCategory: 'Legs' }
 ]
 
+const schema = z.object({
+  name: z.string().min(1),
+  description: z.string().min(1),
+  exercises: z.array(
+    z.object({
+      id: z.string(),
+      exerciseId: z.string(),
+      sets: z.number(),
+      reps: z.number()
+    })
+  )
+})
+
+type FormData = z.infer<typeof schema>
+
 export function WorkoutPlanForm({ plan = null }: WorkoutPlanFormProps) {
   const navigate = useNavigate()
-  const [formData, setFormData] = useState({
-    name: plan?.name || '',
-    description: plan?.description || ''
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors }
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: plan?.name || '',
+      description: plan?.description || '',
+      exercises: plan?.exercises || []
+    }
   })
   const [exercises, setExercises] = useState<Exercise[]>(plan?.exercises || [])
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    console.log('Saving workout plan:', { ...formData, exercises })
+  const onSubmit = (data: FormData) => {
+    console.log('Saving workout plan:', data)
 
     navigate('/dashboard/workouts')
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="name">
           Plan Name <span className="text-red-500">*</span>
         </Label>
         <Input
           id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
+          {...register('name')}
           placeholder="e.g., Upper Body Split"
           required
         />
@@ -68,9 +85,7 @@ export function WorkoutPlanForm({ plan = null }: WorkoutPlanFormProps) {
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
+          {...register('description')}
           placeholder="Describe the workout plan..."
           rows={3}
         />
