@@ -63,13 +63,11 @@ export function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
   const { signUp } = useAuthStore()
 
   async function onSubmit(data: Schema) {
-    const response = await signUp(data.email, data.password, {
+    await signUp(data.email, data.password, {
       firstName: data.name,
       email: data.email,
       password: data.password
     })
-
-    console.log(response)
   }
 
   return (

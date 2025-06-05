@@ -6,6 +6,7 @@ import {
   EditAction
 } from '~/components/shared/TableCells/TableCells'
 import { Badge } from '~/components/ui/badge'
+import { exercisesService } from '~/services/api/exercises/exercisesService'
 import type { Exercises } from '../exercise-form/types/types'
 
 type ExercisesWithActions = Partial<Exercises> & { actions: string }
@@ -79,7 +80,9 @@ const tableConfig: TableConfig = {
         <EditAction link={`edit/${exercise.id}`} />
         <DeleteAction
           description={`This will permanently delete the exercise &quot;${exercise.name}&quot;. This action cannot be undone.`}
-          id={exercise.id}
+          callback={async () =>
+            await exercisesService.deleteExercise(exercise.id)
+          }
         />
       </ActionCell>
     )

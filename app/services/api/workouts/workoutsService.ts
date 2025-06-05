@@ -60,8 +60,6 @@ export const workoutsService = {
       }))
     )
 
-    console.log(exercises.map((exercise) => ({ ...exercise, user_id })))
-
     if (error) {
       handleApiError(error)
       return null
@@ -87,9 +85,10 @@ export const workoutsService = {
   },
 
   deleteWorkout: async (id: string) => {
-    const { error } = await client.from('workouts').delete().eq('id', id)
+    const {data, error } = await client.from('workouts').delete().eq('id', id)
     if (error) {
       handleApiError(error)
     }
+    return data
   }
 }

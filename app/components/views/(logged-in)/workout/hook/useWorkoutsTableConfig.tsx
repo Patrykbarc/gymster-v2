@@ -7,7 +7,10 @@ import {
   StartWorkoutAction
 } from '~/components/shared/TableCells/TableCells'
 import { Badge } from '~/components/ui/badge'
-import type { Workouts } from '~/services/api/workouts/workoutsService'
+import {
+  workoutsService,
+  type Workouts
+} from '~/services/api/workouts/workoutsService'
 
 type WorkoutsWithActions = Partial<Workouts> & {
   actions: string
@@ -60,8 +63,8 @@ const tableConfig: TableConfig = {
         <StartWorkoutAction link={`workout/${workout.id}`} />
         <EditAction link={`workout/${workout.id}`} />
         <DeleteAction
+          callback={async () => await workoutsService.deleteWorkout(workout.id)}
           description={`This will permanently delete the workout &quot;${workout.name}&quot;. This action cannot be undone.`}
-          id={workout.id}
         />
       </ActionCell>
     )

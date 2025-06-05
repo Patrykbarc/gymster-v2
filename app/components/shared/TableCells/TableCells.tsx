@@ -15,7 +15,6 @@ import {
 import { Button, buttonVariants } from '~/components/ui/button'
 import { TableCell } from '~/components/ui/table'
 import { cn } from '~/lib/utils'
-import { exercisesService } from '~/services/api/exercises/exercisesService'
 
 type DefaultCellProps = {
   className?: string
@@ -45,6 +44,7 @@ function DescriptionCell({
 }) {
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null)
   const descriptionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
+  const tableCellRef = useRef<HTMLTableCellElement>(null)
 
   const toggleDescription = (exerciseId: string) => {
     setExpandedExercise((current) =>
@@ -52,8 +52,11 @@ function DescriptionCell({
     )
   }
 
+  const tableCellHeight = tableCellRef.current?.clientHeight
+  const showExpandDescription = tableCellHeight && tableCellHeight > 60
+
   return (
-    <TableCell className={cn(className)}>
+    <TableCell className={cn(className)} ref={tableCellRef}>
       <div className="relative">
         <div
           ref={(el) => {
@@ -61,29 +64,32 @@ function DescriptionCell({
           }}
           className={cn(
             'overflow-hidden whitespace-break-spaces transition-[max-height] duration-300 ease-in-out',
-            expandedExercise === item.id
-              ? 'max-h-[1000px]'
-              : 'relative max-h-[80px] overflow-hidden text-ellipsis after:absolute after:bottom-0 after:left-0 after:h-8 after:w-full after:bg-gradient-to-t after:from-white after:to-transparent after:content-[""]'
+            showExpandDescription &&
+              (expandedExercise === item.id
+                ? 'max-h-[1000px]'
+                : 'relative max-h-[80px] overflow-hidden text-ellipsis after:absolute after:bottom-0 after:left-0 after:h-8 after:w-full after:bg-gradient-to-t after:from-white after:to-transparent after:content-[""]')
           )}
         >
           <p className="pr-8">{item.description || '-'}</p>
         </div>
 
-        <button
-          onClick={() => toggleDescription(item.id)}
-          className={cn(
-            buttonVariants({ variant: 'ghost', size: 'icon' }),
-            'absolute right-0 top-0 size-6 transition-transform duration-300',
-            expandedExercise === item.id && 'rotate-180'
-          )}
-          aria-label={
-            expandedExercise === item.id
-              ? 'Collapse description'
-              : 'Expand description'
-          }
-        >
-          <ChevronDown className={cn('size-4')} />
-        </button>
+        {tableCellHeight && tableCellHeight > 60 && (
+          <button
+            onClick={() => toggleDescription(item.id)}
+            className={cn(
+              buttonVariants({ variant: 'ghost', size: 'icon' }),
+              'absolute right-0 top-0 size-6 transition-transform duration-300',
+              expandedExercise === item.id && 'rotate-180'
+            )}
+            aria-label={
+              expandedExercise === item.id
+                ? 'Collapse description'
+                : 'Expand description'
+            }
+          >
+            <ChevronDown className={cn('size-4')} />
+          </button>
+        )}
       </div>
     </TableCell>
   )
@@ -127,15 +133,15 @@ function EditAction({ link }: { link: string }) {
 
 function DeleteAction({
   description,
-  id
+  callback
 }: {
   description: string | React.ReactNode
-  id: string
+  callback: () => Promise<null>
 }) {
   const { revalidate } = useRevalidator()
 
-  const handleDelete = async (id: string) => {
-    await exercisesService.deleteExercise(id)
+  const handleDelete = async () => {
+    await callback()
     revalidate()
   }
 
@@ -154,9 +160,7 @@ function DeleteAction({
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => handleDelete(id)}>
-            Delete
-          </AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
