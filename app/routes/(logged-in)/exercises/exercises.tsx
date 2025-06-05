@@ -17,8 +17,10 @@ export default function Exercises() {
     return (
       <NoDataFound
         message="No exercises found."
-        link="new"
-        linkText="Create your first exercise."
+        link={{
+          to: '/dashboard/exercises/new',
+          text: 'Create your first exercise.'
+        }}
       />
     )
   }

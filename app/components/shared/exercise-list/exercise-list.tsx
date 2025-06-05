@@ -3,8 +3,8 @@ import { Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import type { Database } from '~/types/database.types'
-import { EmptyState } from './empty-state/empty-state'
-import { ExerciseItem } from './exercise-item/exercise-item'
+import { NoDataFound } from '../no-data-found/no-data-found'
+import { ExerciseItem } from './exercise-item'
 
 type Exercise = Database['public']['Tables']['workout_exercises']['Row']
 
@@ -88,7 +88,16 @@ export function ExerciseList({
           draggable={draggable}
         />
       ))}
-      {exercises.length === 0 && <EmptyState />}
+      {exercises.length === 0 && (
+        <NoDataFound
+          message={
+            <>
+              "No exercises added. Click &quot;Add Exercise&quot; to start
+              building your plan."
+            </>
+          }
+        />
+      )}
     </div>
   )
 

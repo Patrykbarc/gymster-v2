@@ -2,7 +2,7 @@ import { Draggable } from '@hello-pangea/dnd'
 import { GripVertical, Trash2 } from 'lucide-react'
 import { useLoaderData } from 'react-router'
 import { Button } from '~/components/ui/button'
-import { Input } from '~/components/ui/input'
+import { Input as InputProps } from '~/components/ui/input'
 import {
   Select,
   SelectContent,
@@ -27,13 +27,13 @@ type ExerciseItemProps = {
   draggable?: boolean
 }
 
-type Input = {
+type InputProps = {
   label: string
   value: keyof Exercise
   placeholder: string
 }
 
-const inputs: Input[] = [
+const inputs: InputProps[] = [
   {
     label: 'Exercise',
     value: 'exercise_id',
@@ -93,7 +93,7 @@ export function ExerciseItem({
       </Select>
 
       {inputs.map((input) => (
-        <Input
+        <InputProps
           key={input.value}
           type="number"
           value={exercise[input.value] || 0}

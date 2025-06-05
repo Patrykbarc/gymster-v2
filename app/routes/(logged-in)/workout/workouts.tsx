@@ -25,8 +25,10 @@ export default function WorkoutsPage() {
     return (
       <NoDataFound
         message="No workout plans found."
-        link="new"
-        linkText="Create your first workout plan."
+        link={{
+          to: '/dashboard/workouts/new',
+          text: 'Create your first workout plan.'
+        }}
       />
     )
   }
