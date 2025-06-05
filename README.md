@@ -32,9 +32,9 @@ cp .env.example .env
 Required environment variables:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=your-project-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-PROJECT_REF=your-service-role-key
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_PROJECT_REF=your-supabase-project-id
 SUPABASE_DB_PASSWORD=your-supabase-db-password
 ```
 
@@ -59,10 +59,11 @@ The application will be available at `http://localhost:5173`.
 - `pnpm ese:codegen` - runs playwright code generator
 - `pnpm e2e:test` - runs end-to-end tests
 - `pnpm db:generate-types` - generates the database types
-- `pnpm db:pull` - pulls the database schema from Supabase
+- `pnpm db:dump` - dumps the database schema
 
 > ℹ **NOTE**<br/>
-> To perform the `db:pull` command, you need to have Docker Daemon running.
+> To perform the `db:dump` command, you need to have Docker Daemon running.<br/>
+> Also you must link your local environment to your Supabase project using `supabase link` command.
 
 ## Commit Convention
 

@@ -181,7 +181,11 @@ CREATE TABLE IF NOT EXISTS "public"."workout_exercises" (
     "order_position" integer NOT NULL,
     "notes" "text",
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
-    "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL
+    "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    "weight" integer,
+    "name" "text",
+    "user_id" "uuid",
+    CONSTRAINT "workout_exercises_weight_check" CHECK (("weight" > 0))
 );
 
 
@@ -208,11 +212,7 @@ CREATE TABLE IF NOT EXISTS "public"."workouts" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "name" "text" NOT NULL,
     "description" "text",
-    "type" "public"."workout_type" NOT NULL,
-    "difficulty" "public"."difficulty_level" NOT NULL,
     "duration_minutes" integer,
-    "calories_burn" integer,
-    "created_by" "uuid",
     "is_public" boolean DEFAULT false,
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
@@ -274,10 +274,6 @@ CREATE INDEX "idx_workout_logs_user_id" ON "public"."workout_logs" USING "btree"
 
 
 
-CREATE INDEX "idx_workouts_created_by" ON "public"."workouts" USING "btree" ("created_by");
-
-
-
 CREATE OR REPLACE TRIGGER "update_exercise_logs_updated_at" BEFORE UPDATE ON "public"."exercise_logs" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at_column"();
 
 
@@ -328,6 +324,11 @@ ALTER TABLE ONLY "public"."workout_exercises"
 
 
 ALTER TABLE ONLY "public"."workout_exercises"
+    ADD CONSTRAINT "workout_exercises_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id");
+
+
+
+ALTER TABLE ONLY "public"."workout_exercises"
     ADD CONSTRAINT "workout_exercises_workout_id_fkey" FOREIGN KEY ("workout_id") REFERENCES "public"."workouts"("id") ON DELETE CASCADE;
 
 
@@ -343,11 +344,6 @@ ALTER TABLE ONLY "public"."workout_logs"
 
 
 ALTER TABLE ONLY "public"."workouts"
-    ADD CONSTRAINT "workouts_created_by_fkey" FOREIGN KEY ("created_by") REFERENCES "public"."profiles"("id") ON DELETE CASCADE;
-
-
-
-ALTER TABLE ONLY "public"."workouts"
     ADD CONSTRAINT "workouts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "auth"."users"("id");
 
 
@@ -356,7 +352,19 @@ CREATE POLICY "Enable delete for users based on user_id" ON "public"."exercises"
 
 
 
+CREATE POLICY "Enable delete for users based on user_id" ON "public"."workouts" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+
+
 CREATE POLICY "Enable insert for authenticated users only" ON "public"."exercises" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."workout_exercises" FOR INSERT TO "authenticated" WITH CHECK (true);
+
+
+
+CREATE POLICY "Enable insert for authenticated users only" ON "public"."workouts" FOR INSERT TO "authenticated" WITH CHECK (true);
 
 
 
@@ -368,19 +376,19 @@ CREATE POLICY "Enable users to view their own data only" ON "public"."exercises"
 
 
 
+CREATE POLICY "Enable users to view their own data only" ON "public"."workout_exercises" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+
+
 CREATE POLICY "Enable users to view their own data only" ON "public"."workout_logs" FOR SELECT TO "authenticated" USING (("user_id" = "auth"."uid"()));
 
 
 
+CREATE POLICY "Enable users to view their own data only" ON "public"."workouts" FOR SELECT TO "authenticated" USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
+
+
+
 CREATE POLICY "Public profiles are viewable by everyone" ON "public"."profiles" FOR SELECT USING (true);
-
-
-
-CREATE POLICY "Users can create workouts" ON "public"."workouts" FOR INSERT WITH CHECK (("auth"."uid"() = "created_by"));
-
-
-
-CREATE POLICY "Users can delete own workouts" ON "public"."workouts" FOR DELETE USING (("created_by" = "auth"."uid"()));
 
 
 
@@ -398,33 +406,13 @@ CREATE POLICY "Users can manage own workout logs" ON "public"."workout_logs" WIT
 
 
 
-CREATE POLICY "Users can manage workout exercises for own workouts" ON "public"."workout_exercises" USING ((EXISTS ( SELECT 1
-   FROM "public"."workouts"
-  WHERE (("workouts"."id" = "workout_exercises"."workout_id") AND ("workouts"."created_by" = "auth"."uid"())))));
-
-
-
 CREATE POLICY "Users can update own profile" ON "public"."profiles" FOR UPDATE USING (("auth"."uid"() = "id"));
-
-
-
-CREATE POLICY "Users can update own workouts" ON "public"."workouts" FOR UPDATE USING (("created_by" = "auth"."uid"()));
 
 
 
 CREATE POLICY "Users can view own exercise logs" ON "public"."exercise_logs" FOR SELECT USING ((EXISTS ( SELECT 1
    FROM "public"."workout_logs"
   WHERE (("workout_logs"."id" = "exercise_logs"."workout_log_id") AND ("workout_logs"."user_id" = "auth"."uid"())))));
-
-
-
-CREATE POLICY "Workout exercises are viewable with workout" ON "public"."workout_exercises" FOR SELECT USING ((EXISTS ( SELECT 1
-   FROM "public"."workouts"
-  WHERE (("workouts"."id" = "workout_exercises"."workout_id") AND ("workouts"."is_public" OR ("workouts"."created_by" = "auth"."uid"()))))));
-
-
-
-CREATE POLICY "Workouts are viewable by everyone if public" ON "public"."workouts" FOR SELECT USING ((("is_public" = true) OR ("created_by" = "auth"."uid"())));
 
 
 
