@@ -89,18 +89,6 @@ CREATE TYPE "public"."user_role" AS ENUM (
 ALTER TYPE "public"."user_role" OWNER TO "postgres";
 
 
-CREATE TYPE "public"."workout_type" AS ENUM (
-    'strength',
-    'cardio',
-    'flexibility',
-    'hiit',
-    'custom'
-);
-
-
-ALTER TYPE "public"."workout_type" OWNER TO "postgres";
-
-
 CREATE OR REPLACE FUNCTION "public"."update_updated_at_column"() RETURNS "trigger"
     LANGUAGE "plpgsql"
     AS $$
@@ -176,14 +164,11 @@ CREATE TABLE IF NOT EXISTS "public"."workout_exercises" (
     "exercise_id" "uuid",
     "sets" integer,
     "reps" integer,
-    "duration_seconds" integer,
-    "rest_seconds" integer,
     "order_position" integer NOT NULL,
     "notes" "text",
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
     "weight" integer,
-    "name" "text",
     "user_id" "uuid",
     CONSTRAINT "workout_exercises_weight_check" CHECK (("weight" > 0))
 );
@@ -212,7 +197,6 @@ CREATE TABLE IF NOT EXISTS "public"."workouts" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "name" "text" NOT NULL,
     "description" "text",
-    "duration_minutes" integer,
     "is_public" boolean DEFAULT false,
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,

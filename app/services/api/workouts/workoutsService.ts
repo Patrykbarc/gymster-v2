@@ -2,25 +2,28 @@ import type { User } from '@supabase/supabase-js'
 import { client } from '~/supabase/client'
 import { server } from '~/supabase/server'
 import type { Database } from '~/types/database.types'
-import { handleApiError } from '../../../utils/handleApiError'
+import { handleApiError } from '~/utils/handleApiError'
 
-export type WorkoutInsert =
-  Database['public']['Tables']['workouts']['Insert'] & {
-    user_id: User['id']
-  }
+type WorkoutInsert = Database['public']['Tables']['workouts']['Insert']
+type WorkoutExerciseInsert =
+  Database['public']['Tables']['workout_exercises']['Insert']
+
+export type Workouts = Database['public']['Tables']['workouts']['Row'] & {
+  workout_exercises: { count: number }[]
+}
 
 export const workoutsService = {
-  getWorkouts: async (request: Request) => {
+  getWorkouts: async (request: Request): Promise<Workouts[] | null> => {
     const { data, error } = await server(request)
       .supabase.from('workouts')
-      .select('*')
+      .select('*, workout_exercises(count)')
     if (error) {
       handleApiError(error)
     }
     return data
   },
 
-  getExercise: async (request: Request, id: string) => {
+  getWorkoutById: async (request: Request, id: string) => {
     const { data, error } = await server(request)
       .supabase.from('workouts')
       .select('*')
@@ -32,32 +35,61 @@ export const workoutsService = {
   },
 
   insertWorkout: async (workout: WorkoutInsert) => {
-    const { data, error } = await client
+    const { data: workoutData, error: workoutError } = await client
       .from('workouts')
       .insert(workout)
       .select()
+      .single()
+
+    if (workoutError) {
+      handleApiError(workoutError)
+      return null
+    }
+
+    return workoutData
+  },
+
+  insertWorkoutExercises: async (
+    exercises: WorkoutExerciseInsert[],
+    user_id: User['id']
+  ) => {
+    const { data, error } = await client.from('workout_exercises').insert(
+      exercises.map((exercise) => ({
+        ...exercise,
+        user_id
+      }))
+    )
+
+    console.log(exercises.map((exercise) => ({ ...exercise, user_id })))
+
     if (error) {
       handleApiError(error)
+      return null
     }
+
     return data
   },
 
-  updateWorkout: async (id: string, workout: WorkoutInsert) => {
+  updateWorkout: async (id: string, workout: Partial<WorkoutInsert>) => {
     const { data, error } = await client
       .from('workouts')
       .update(workout)
       .eq('id', id)
+      .select()
+      .single()
+
     if (error) {
       handleApiError(error)
+      return null
     }
+
     return data
   },
 
   deleteWorkout: async (id: string) => {
-    const { data, error } = await client.from('workouts').delete().eq('id', id)
+    const { error } = await client.from('workouts').delete().eq('id', id)
     if (error) {
       handleApiError(error)
     }
-    return data
   }
 }

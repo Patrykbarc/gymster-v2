@@ -13,7 +13,7 @@ import { workoutsService } from '~/services/api/workouts/workoutsService'
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const workouts = await workoutsService.getWorkouts(request)
-
+  // console.dir(workouts, { depth: null })
   return { workouts }
 }
 

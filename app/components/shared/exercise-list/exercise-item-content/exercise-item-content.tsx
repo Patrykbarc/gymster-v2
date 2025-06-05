@@ -1,4 +1,5 @@
 import { GripVertical, Trash2 } from 'lucide-react'
+import { useLoaderData } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -9,17 +10,19 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
+import type { loader } from '~/routes/(logged-in)/workout/new-workout-plan'
 import type { ExerciseItemContentProps } from '../_types/types'
 import { SetsInputWrapper } from '../sets-input-wrapper/sets-input-wrapper'
 
 export function ExerciseItemContent({
   exercise,
   index,
-  availableExercises,
   onExerciseChange,
   onRemove,
   draggable
 }: ExerciseItemContentProps) {
+  const { exercises } = useLoaderData<typeof loader>()
+
   return (
     <div className="flex items-center gap-2">
       {draggable && (
@@ -32,18 +35,18 @@ export function ExerciseItemContent({
         <SetsInputWrapper className="md:col-span-2">
           <Label htmlFor={`exercise-${index}`}>Exercise</Label>
           <Select
-            value={exercise.exerciseId}
+            value={exercise.exercise_id}
             onValueChange={(value) =>
-              onExerciseChange(index, 'exerciseId', value)
+              onExerciseChange(index, 'exercise_id', value)
             }
           >
             <SelectTrigger className="w-full md:w-fit" id={`exercise-${index}`}>
               <SelectValue placeholder="Select exercise" />
             </SelectTrigger>
             <SelectContent>
-              {availableExercises.map((ex) => (
+              {exercises?.map((ex) => (
                 <SelectItem key={ex.id} value={ex.id}>
-                  {ex.name} ({ex.muscleCategory})
+                  {ex.name}
                 </SelectItem>
               ))}
             </SelectContent>

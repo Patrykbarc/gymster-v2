@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs } from 'react-router'
+import { redirect, useLoaderData, type LoaderFunctionArgs } from 'react-router'
 import {
   Card,
   CardContent,
@@ -7,15 +7,23 @@ import {
   CardTitle
 } from '~/components/ui/card'
 import { WorkoutPlanForm } from '~/components/views/(logged-in)/workout/workout-plan-form/workout-plan-form'
+import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const exercises = await exercisesService.getExercises(request) // for add exercises to the workout plan
+  const exercises = await exercisesService.getExercises(request)
+  const { session } = await authService.getUser(request)
 
-  return { exercises }
+  if (!session?.user_id) {
+    return redirect('/login')
+  }
+
+  return { exercises, userId: session?.user_id }
 }
 
 export default function NewWorkoutPlanPage() {
+  const { userId } = useLoaderData<typeof loader>()
+
   return (
     <div className="space-y-6">
       <Card>
@@ -26,7 +34,7 @@ export default function NewWorkoutPlanPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <WorkoutPlanForm />
+          <WorkoutPlanForm userId={userId} />
         </CardContent>
       </Card>
     </div>

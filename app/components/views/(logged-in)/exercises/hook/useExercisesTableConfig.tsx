@@ -1,10 +1,12 @@
-import { Badge } from '~/components/ui/badge'
-import type { Exercises } from '../exercise-form/types/types'
 import {
   ActionCell,
   DefaultCell,
-  DescriptionCell
-} from './TableCells/TableCells'
+  DeleteAction,
+  DescriptionCell,
+  EditAction
+} from '~/components/shared/TableCells/TableCells'
+import { Badge } from '~/components/ui/badge'
+import type { Exercises } from '../exercise-form/types/types'
 
 type ExercisesWithActions = Partial<Exercises> & { actions: string }
 
@@ -30,7 +32,10 @@ const tableConfig: TableConfig = {
     head: 'Description',
     value: (exercise) => (
       <DescriptionCell
-        exercise={exercise}
+        item={{
+          id: exercise.id,
+          description: exercise.description
+        }}
         className="relative hidden  md:table-cell"
       />
     )
@@ -69,6 +74,14 @@ const tableConfig: TableConfig = {
   },
   actions: {
     head: 'Actions',
-    value: (exercise) => <ActionCell exercise={exercise} />
+    value: (exercise) => (
+      <ActionCell>
+        <EditAction link={`edit/${exercise.id}`} />
+        <DeleteAction
+          description={`This will permanently delete the exercise &quot;${exercise.name}&quot;. This action cannot be undone.`}
+          id={exercise.id}
+        />
+      </ActionCell>
+    )
   }
 }

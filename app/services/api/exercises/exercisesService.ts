@@ -9,8 +9,9 @@ export type ExerciseInsert =
     user_id: User['id']
   }
 
+export type ExercisesRow = Database['public']['Tables']['exercises']['Row']
 export const exercisesService = {
-  getExercises: async (request: Request) => {
+  getExercises: async (request: Request): Promise<ExercisesRow[] | null> => {
     const { data, error } = await server(request)
       .supabase.from('exercises')
       .select('*')

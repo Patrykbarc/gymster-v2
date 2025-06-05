@@ -1,76 +1,40 @@
-import { Edit, Play, Trash2 } from 'lucide-react'
-import { useState } from 'react'
-import { Link } from 'react-router'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '~/components/ui/alert-dialog'
-import { Badge } from '~/components/ui/badge'
-import { Button } from '~/components/ui/button'
+import { Fragment } from 'react'
+import { useLoaderData } from 'react-router'
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow
 } from '~/components/ui/table'
-
-const workoutPlans = [
-  {
-    id: '1',
-    name: 'Upper Body Split',
-    description: 'Focus on chest, back, and arms',
-    exerciseCount: 8
-  },
-  {
-    id: '2',
-    name: 'Lower Body Split',
-    description: 'Focus on quads, hamstrings, and calves',
-    exerciseCount: 6
-  },
-  {
-    id: '3',
-    name: 'Full Body Workout',
-    description: 'Complete body workout for beginners',
-    exerciseCount: 10
-  },
-  {
-    id: '4',
-    name: 'Core Blast',
-    description: 'Intense core and ab workout',
-    exerciseCount: 5
-  }
-]
+import type { loader } from '~/routes/(logged-in)/workout/workouts'
+import { useWorkoutsTableConfig } from './hook/useWorkoutsTableConfig'
 
 export function WorkoutPlanList() {
-  const [plans, setPlans] = useState(workoutPlans)
-
-  const handleDelete = (id: string) => {
-    setPlans(plans.filter((plan) => plan.id !== id))
-  }
+  const { workouts } = useLoaderData<typeof loader>()
+  // const handleDelete = (id: string) => {
+  //   setPlans(plans.filter((plan) => plan.id !== id))
+  // }
+  console.log(workouts)
+  const tableConfig = useWorkoutsTableConfig()
 
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead className="hidden md:table-cell">Description</TableHead>
-          <TableHead>Exercises</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          {tableConfig.map((config) => (
+            <TableHead key={config.head}>{config.head}</TableHead>
+          ))}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {plans.map((plan) => (
-          <TableRow key={plan.id}>
-            <TableCell className="font-medium">{plan.name}</TableCell>
+        {workouts?.map((workout) => (
+          <TableRow key={workout.id}>
+            {tableConfig.map((config) => (
+              <Fragment key={config.head}>{config.value(workout)}</Fragment>
+            ))}
+
+            {/* <TableCell className="font-medium">{plan.name}</TableCell>
             <TableCell className="hidden md:table-cell">
               {plan.description}
             </TableCell>
@@ -115,7 +79,7 @@ export function WorkoutPlanList() {
                   </AlertDialogContent>
                 </AlertDialog>
               </div>
-            </TableCell>
+            </TableCell> */}
           </TableRow>
         ))}
       </TableBody>

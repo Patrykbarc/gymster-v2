@@ -2,13 +2,18 @@ import { type DropResult, DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
-import type { Exercise, ExerciseListProps } from './_types/types'
+import type { Exercise } from './_types/types'
 import { EmptyState } from './empty-state/empty-state'
 import { ExerciseItem } from './exercise-item/exercise-item'
 
+type ExerciseListProps = {
+  exercises: Exercise[]
+  onExercisesChange: (exercises: Exercise[]) => void
+  draggable?: boolean
+  className?: string
+}
 export function ExerciseList({
   exercises,
-  availableExercises,
   onExercisesChange,
   draggable = false,
   className = ''
@@ -16,7 +21,13 @@ export function ExerciseList({
   const handleAddExercise = () => {
     onExercisesChange([
       ...exercises,
-      { id: Date.now().toString(), exerciseId: '', sets: 3, reps: 10 }
+      {
+        id: Date.now().toString(),
+        exercise_id: '',
+        sets: 3,
+        reps: 10,
+        weight: 100
+      }
     ])
   }
 
@@ -51,7 +62,6 @@ export function ExerciseList({
           key={exercise.id}
           exercise={exercise}
           index={index}
-          availableExercises={availableExercises}
           onExerciseChange={handleExerciseChange}
           onRemove={handleRemoveExercise}
           draggable={draggable}
