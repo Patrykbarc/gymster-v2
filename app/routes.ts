@@ -5,6 +5,29 @@ import {
   route
 } from '@react-router/dev/routes'
 
+const exerciseRoutes = [
+  route('dashboard/exercises', './routes/(logged-in)/exercises/exercises.tsx'),
+  route(
+    'dashboard/exercises/new',
+    './routes/(logged-in)/exercises/new-exercise.tsx'
+  ),
+  route(
+    'dashboard/exercises/edit/:exerciseId',
+    './routes/(logged-in)/exercises/edit-exercise.tsx'
+  )
+]
+const workoutRoutes = [
+  route('dashboard/workouts', './routes/(logged-in)/workout/workouts.tsx'),
+  route(
+    'dashboard/workouts/new',
+    './routes/(logged-in)/workout/new-workout-plan.tsx'
+  ),
+  route(
+    'dashboard/workouts/edit/:workoutId',
+    './routes/(logged-in)/workout/edit-workout-plan.tsx'
+  )
+]
+
 export default [
   index('routes/home.tsx'),
 
@@ -15,23 +38,8 @@ export default [
 
   layout('./routes/(logged-in)/layout.tsx', [
     route('dashboard', './routes/(logged-in)/dashboard/dashboard.tsx'),
-    route(
-      'dashboard/exercises',
-      './routes/(logged-in)/exercises/exercises.tsx'
-    ),
-    route(
-      'dashboard/exercises/new',
-      './routes/(logged-in)/exercises/new-exercise.tsx'
-    ),
-    route(
-      'dashboard/exercises/edit/:exerciseId',
-      './routes/(logged-in)/exercises/edit-exercise.tsx'
-    ),
-    route('dashboard/workouts', './routes/(logged-in)/workout/workouts.tsx'),
-    route(
-      'dashboard/workouts/new',
-      './routes/(logged-in)/workout/new-workout-plan.tsx'
-    ),
+    ...exerciseRoutes,
+    ...workoutRoutes,
     route(
       'dashboard/start-workout',
       './routes/(logged-in)/start-workout/start-workout.tsx'

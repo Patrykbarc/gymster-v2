@@ -10,22 +10,32 @@ import { WorkoutPlanForm } from '~/components/views/(logged-in)/workout/workout-
 import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 import { workoutsService } from '~/services/api/workouts/workoutsService'
+import { getLastUrlSegment } from '~/utils/getLastUrlSegment'
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const workouts = await workoutsService.getWorkouts(request)
-  const exercises = await exercisesService.getExercises(request)
+  const exercises = await exercisesService.getExercises(request) // Neccesary for the edit exercise list
+
+  const url = new URL(request.url)
+  const workoutId = getLastUrlSegment(url.pathname)
+
+  if (!workoutId) {
+    return redirect('/workouts')
+  }
+
+  const workout = await workoutsService
+    .getWorkoutById(request, workoutId)
+    .then((workout) => workout?.[0])
   const { session } = await authService.getUser(request)
 
   if (!session?.user_id) {
     return redirect('/login')
   }
 
-  return { workouts, exercises, userId: session?.user_id }
+  return { workout, exercises, userId: session?.user_id }
 }
 
-export default function NewWorkoutPlanPage() {
-  const { workouts, userId } = useLoaderData<typeof loader>()
-
+export default function EditWorkoutPlanPage() {
+  const { workout, userId } = useLoaderData<typeof loader>()
   return (
     <div className="space-y-6">
       <Card>
@@ -36,7 +46,7 @@ export default function NewWorkoutPlanPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <WorkoutPlanForm userId={userId} />
+          <WorkoutPlanForm userId={userId} plan={workout} />
         </CardContent>
       </Card>
     </div>

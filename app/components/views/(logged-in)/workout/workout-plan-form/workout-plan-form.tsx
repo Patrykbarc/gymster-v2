@@ -4,7 +4,6 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { z } from 'zod'
 
-import type { Exercise } from '~/components/shared/exercise-list/_types/types'
 import { ExerciseList } from '~/components/shared/exercise-list/exercise-list'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -13,27 +12,30 @@ import { Textarea } from '~/components/ui/textarea'
 import { workoutsService } from '~/services/api/workouts/workoutsService'
 import type { Database } from '~/types/database.types'
 
+type Workout = Database['public']['Tables']['workouts']['Row']
+type Exercise = Database['public']['Tables']['workout_exercises']['Row']
 type WorkoutPlanFormProps = {
   userId: string
-  plan?: {
-    id?: string
-    name?: string
-    description?: string
-    exercises?: Exercise[]
-  } | null
+  plan?: (Workout & { workout_exercises: Exercise[] }) | null
 }
 
 const schema = z.object({
   user_id: z.string(),
   name: z.string().min(1, 'Name is required'),
-  description: z.string().min(1, 'Description is required'),
+  description: z.string().optional(),
   exercises: z.array(
     z.object({
       id: z.string(),
-      exercise_id: z.string(),
-      sets: z.number(),
-      reps: z.number(),
-      weight: z.number()
+      exercise_id: z.string().nullable(),
+      sets: z.number().nullable(),
+      reps: z.number().nullable(),
+      weight: z.number().nullable(),
+      order_position: z.number(),
+      workout_id: z.string().nullable(),
+      user_id: z.string().nullable(),
+      created_at: z.string(),
+      updated_at: z.string(),
+      notes: z.string().nullable()
     })
   )
 })
@@ -53,10 +55,13 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
       user_id: userId,
       name: plan?.name || '',
       description: plan?.description || '',
-      exercises: plan?.exercises || []
+      exercises: plan?.workout_exercises || []
     }
   })
-  const [exercises, setExercises] = useState<Exercise[]>(plan?.exercises || [])
+
+  const [exercises, setExercises] = useState<Exercise[]>(
+    plan?.workout_exercises || []
+  )
 
   useEffect(() => {
     setValue('exercises', exercises)
@@ -70,7 +75,9 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
         user_id: data.user_id
       }
 
-      const workout = await workoutsService.insertWorkout(workoutData)
+      const workout = plan?.id
+        ? await workoutsService.updateWorkout(plan.id, workoutData)
+        : await workoutsService.insertWorkout(workoutData)
 
       if (workout && exercises.length > 0) {
         const workoutExercises = exercises.map((exercise, index) => ({
@@ -82,10 +89,15 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
           order_position: index + 1
         }))
 
-        await workoutsService.insertWorkoutExercises(
-          workoutExercises,
-          data.user_id
-        )
+        plan?.id
+          ? await workoutsService.updateWorkoutExercises(
+              workoutExercises,
+              data.user_id
+            )
+          : await workoutsService.insertWorkoutExercises(
+              workoutExercises,
+              data.user_id
+            )
       }
 
       navigate('/dashboard/workouts')

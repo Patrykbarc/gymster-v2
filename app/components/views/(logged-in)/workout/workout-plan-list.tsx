@@ -12,10 +12,6 @@ import { useWorkoutsTableConfig } from './hook/useWorkoutsTableConfig'
 
 export function WorkoutPlanList() {
   const { workouts } = useLoaderData<typeof loader>()
-  // const handleDelete = (id: string) => {
-  //   setPlans(plans.filter((plan) => plan.id !== id))
-  // }
-  // console.log(workouts)
   const tableConfig = useWorkoutsTableConfig()
 
   return (

@@ -1,4 +1,5 @@
-import { Link, useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import { NoDataFound } from '~/components/shared/no-data-found/no-data-found'
 import { Card, CardContent } from '~/components/ui/card'
 import { ExerciseListTable } from '~/components/views/(logged-in)/exercises/exercise-list-table'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
@@ -14,14 +15,11 @@ export default function Exercises() {
 
   if (exercises?.length === 0) {
     return (
-      <div className="mt-10 flex h-full items-center justify-center">
-        <p className="text-muted-foreground text-sm">
-          No exercises found.{' '}
-          <Link className="text-blue-500" to="new">
-            Create your first exercise.
-          </Link>
-        </p>
-      </div>
+      <NoDataFound
+        message="No exercises found."
+        link="new"
+        linkText="Create your first exercise."
+      />
     )
   }
 

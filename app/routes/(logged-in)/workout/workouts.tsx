@@ -1,5 +1,6 @@
 import { Search } from 'lucide-react'
-import { type LoaderFunctionArgs } from 'react-router'
+import { useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import { NoDataFound } from '~/components/shared/no-data-found/no-data-found'
 import {
   Card,
   CardContent,
@@ -13,11 +14,23 @@ import { workoutsService } from '~/services/api/workouts/workoutsService'
 
 export async function loader({ request }: LoaderFunctionArgs) {
   const workouts = await workoutsService.getWorkouts(request)
-  // console.dir(workouts, { depth: null })
+
   return { workouts }
 }
 
 export default function WorkoutsPage() {
+  const { workouts } = useLoaderData<typeof loader>()
+
+  if (workouts?.length === 0) {
+    return (
+      <NoDataFound
+        message="No workout plans found."
+        link="new"
+        linkText="Create your first workout plan."
+      />
+    )
+  }
+
   return (
     <>
       <div className="space-y-6">

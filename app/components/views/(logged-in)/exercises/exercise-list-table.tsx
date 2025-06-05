@@ -25,7 +25,7 @@ export function ExerciseListTable() {
       </TableHeader>
       <TableBody>
         {exercises?.map((exercise) => (
-          <TableRow key={exercise.id} className="align-top">
+          <TableRow key={exercise.id}>
             {tableConfig.map((config) => (
               <Fragment key={config.head}>{config.value(exercise)}</Fragment>
             ))}

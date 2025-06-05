@@ -4,7 +4,7 @@ import {
   DeleteAction,
   DescriptionCell,
   EditAction
-} from '~/components/shared/TableCells/TableCells'
+} from '~/components/shared/table-cells/table-cells'
 import { Badge } from '~/components/ui/badge'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 import type { Exercises } from '../exercise-form/types/types'
@@ -37,7 +37,7 @@ const tableConfig: TableConfig = {
           id: exercise.id,
           description: exercise.description
         }}
-        className="relative hidden  md:table-cell"
+        className="relative hidden md:table-cell"
       />
     )
   },

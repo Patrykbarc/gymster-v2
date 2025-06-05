@@ -26,7 +26,7 @@ export const workoutsService = {
   getWorkoutById: async (request: Request, id: string) => {
     const { data, error } = await server(request)
       .supabase.from('workouts')
-      .select('*')
+      .select('*, workout_exercises(*)')
       .eq('id', id)
     if (error) {
       handleApiError(error)
@@ -68,13 +68,36 @@ export const workoutsService = {
     return data
   },
 
-  updateWorkout: async (id: string, workout: Partial<WorkoutInsert>) => {
+  updateWorkout: async (planId: string, workout: Partial<WorkoutInsert>) => {
     const { data, error } = await client
       .from('workouts')
       .update(workout)
-      .eq('id', id)
+      .eq('id', planId)
       .select()
-      .single()
+
+    if (error) {
+      handleApiError(error)
+      return null
+    }
+
+    return data[0]
+  },
+
+  updateWorkoutExercises: async (
+    exercises: WorkoutExerciseInsert[],
+    user_id: User['id']
+  ) => {
+    const exerciseIds = exercises
+      .map((e) => e.id)
+      .filter((id): id is string => id !== undefined)
+
+    const { data, error } = await client
+      .from('workout_exercises')
+      .update({
+        user_id,
+        updated_at: new Date().toISOString()
+      })
+      .in('id', exerciseIds)
 
     if (error) {
       handleApiError(error)
@@ -85,7 +108,7 @@ export const workoutsService = {
   },
 
   deleteWorkout: async (id: string) => {
-    const {data, error } = await client.from('workouts').delete().eq('id', id)
+    const { data, error } = await client.from('workouts').delete().eq('id', id)
     if (error) {
       handleApiError(error)
     }

@@ -2,9 +2,11 @@ import { type DropResult, DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
-import type { Exercise } from './_types/types'
+import type { Database } from '~/types/database.types'
 import { EmptyState } from './empty-state/empty-state'
 import { ExerciseItem } from './exercise-item/exercise-item'
+
+type Exercise = Database['public']['Tables']['workout_exercises']['Row']
 
 type ExerciseListProps = {
   exercises: Exercise[]
@@ -12,21 +14,29 @@ type ExerciseListProps = {
   draggable?: boolean
   className?: string
 }
+
 export function ExerciseList({
   exercises,
   onExercisesChange,
   draggable = false,
-  className = ''
+  className
 }: ExerciseListProps) {
   const handleAddExercise = () => {
+    const now = new Date().toISOString()
     onExercisesChange([
       ...exercises,
       {
         id: Date.now().toString(),
-        exercise_id: '',
+        exercise_id: null,
         sets: 3,
         reps: 10,
-        weight: 100
+        weight: 100,
+        notes: null,
+        order_position: exercises.length + 1,
+        workout_id: null,
+        user_id: null,
+        created_at: now,
+        updated_at: now
       }
     ])
   }
@@ -34,10 +44,14 @@ export function ExerciseList({
   const handleExerciseChange = (
     index: number,
     field: keyof Exercise,
-    value: string | number
+    value: string | number | null
   ) => {
     const updatedExercises = [...exercises]
-    updatedExercises[index][field] = value as never
+    updatedExercises[index] = {
+      ...updatedExercises[index],
+      [field]: value,
+      updated_at: new Date().toISOString()
+    }
     onExercisesChange(updatedExercises)
   }
 
@@ -52,7 +66,14 @@ export function ExerciseList({
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
 
-    onExercisesChange(items)
+    // Update order_position for all items
+    const updatedItems = items.map((item, index) => ({
+      ...item,
+      order_position: index + 1,
+      updated_at: new Date().toISOString()
+    }))
+
+    onExercisesChange(updatedItems)
   }
 
   const renderExercises = () => (

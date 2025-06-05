@@ -31,7 +31,7 @@ export function ExerciseItemContent({
         </div>
       )}
 
-      <div className="grid flex-1 gap-4 md:grid-cols-4">
+      <div className="grid flex-1 gap-4 md:grid-cols-5">
         <SetsInputWrapper className="md:col-span-2">
           <Label htmlFor={`exercise-${index}`}>Exercise</Label>
           <Select
@@ -77,6 +77,20 @@ export function ExerciseItemContent({
             value={exercise.reps}
             onChange={(e) =>
               onExerciseChange(index, 'reps', Number.parseInt(e.target.value))
+            }
+          />
+        </SetsInputWrapper>
+
+        <SetsInputWrapper>
+          <Label htmlFor={`weight-${index}`}>Weight</Label>
+          <Input
+            id={`weight-${index}`}
+            type="number"
+            min="1"
+            placeholder="Weight"
+            value={exercise.weight}
+            onChange={(e) =>
+              onExerciseChange(index, 'weight', Number.parseInt(e.target.value))
             }
           />
         </SetsInputWrapper>
