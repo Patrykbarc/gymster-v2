@@ -31,7 +31,7 @@ export function ExerciseList({
   const handleAddExercise = () => {
     const now = new Date().toISOString()
     onExercisesChange([
-      ...exercises,
+      ...sortedExercises,
       {
         id: crypto.randomUUID(),
         exercise_id: null,
@@ -39,7 +39,7 @@ export function ExerciseList({
         reps: 10,
         weight: 100,
         notes: null,
-        order_position: exercises.length + 1,
+        order_position: sortedExercises.length + 1,
         workout_id: workoutId,
         user_id: null,
         created_at: now,
@@ -53,7 +53,7 @@ export function ExerciseList({
     field: keyof Exercise,
     value: string | number | null
   ) => {
-    const updatedExercises = [...exercises]
+    const updatedExercises = [...sortedExercises]
     updatedExercises[index] = {
       ...updatedExercises[index],
       [field]: value,
@@ -63,13 +63,20 @@ export function ExerciseList({
   }
 
   const handleRemoveExercise = (index: number) => {
-    onExercisesChange(exercises.filter((_, i) => i !== index))
+    const updatedExercises = sortedExercises
+      .filter((_, i) => i !== index)
+      .map((exercise, newIndex) => ({
+        ...exercise,
+        order_position: newIndex + 1,
+        updated_at: new Date().toISOString()
+      }))
+    onExercisesChange(updatedExercises)
   }
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return
 
-    const items = Array.from(exercises)
+    const items = Array.from(sortedExercises)
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
 
