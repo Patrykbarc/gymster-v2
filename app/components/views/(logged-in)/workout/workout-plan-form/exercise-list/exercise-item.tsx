@@ -2,7 +2,8 @@ import { Draggable } from '@hello-pangea/dnd'
 import { GripVertical, Trash2 } from 'lucide-react'
 import { useLoaderData } from 'react-router'
 import { Button } from '~/components/ui/button'
-import { Input as InputProps } from '~/components/ui/input'
+import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -35,11 +36,6 @@ type InputProps = {
 
 const inputs: InputProps[] = [
   {
-    label: 'Exercise',
-    value: 'exercise_id',
-    placeholder: 'Select exercise'
-  },
-  {
     label: 'Sets',
     value: 'sets',
     placeholder: 'Sets'
@@ -64,52 +60,70 @@ export function ExerciseItem({
   draggable = false
 }: ExerciseItemProps) {
   const { exercises } = useLoaderData<typeof loader>()
-  const handleChange = (
-    field: keyof Exercise,
-    value: string | number | null
-  ) => {
+
+  function handleChange(field: keyof Exercise, value: string | number | null) {
     onExerciseChange(index, field, value)
   }
 
   const renderContent = () => (
-    <div className="flex items-center gap-4 rounded-lg border p-4">
-      {draggable && (
-        <GripVertical className="h-5 w-5 cursor-grab text-gray-500" />
-      )}
-      <Select
-        value={exercise.exercise_id || ''}
-        onValueChange={(value) => handleChange('exercise_id', value)}
-      >
-        <SelectTrigger className="w-[300px]">
-          <SelectValue placeholder="Select exercise" />
-        </SelectTrigger>
-        <SelectContent>
-          {exercises?.map((ex) => (
-            <SelectItem key={ex.id} value={ex.id}>
-              {ex.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
+    <div className="flex flex-col justify-between gap-4 rounded-lg border p-4 lg:flex-row lg:items-center">
+      <div className="mt-auto flex w-full items-center gap-2 lg:w-auto">
+        {draggable && (
+          <GripVertical className="size-5 cursor-grab text-gray-500" />
+        )}
+        <Select
+          value={exercise.exercise_id || ''}
+          onValueChange={(value) => handleChange('exercise_id', value)}
+        >
+          <SelectTrigger className="w-full lg:w-[300px]">
+            <SelectValue placeholder="Select exercise" />
+          </SelectTrigger>
+          <SelectContent>
+            {exercises?.map((ex) => (
+              <SelectItem key={ex.id} value={ex.id}>
+                {ex.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-      {inputs.map((input) => (
-        <InputProps
-          key={input.value}
-          type="number"
-          value={exercise[input.value] || 0}
-          onChange={(e) => handleChange(input.value, Number(e.target.value))}
-          placeholder={input.placeholder}
-          className="w-20"
-        />
-      ))}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="lg:hidden"
+          onClick={() => onRemove(index)}
+        >
+          <Trash2 className="size-4" />
+        </Button>
+      </div>
+
+      <div className="grid w-full grid-cols-3 gap-2">
+        {inputs.map((input) => (
+          <div className="col-span-1 space-y-2" key={input.value}>
+            <Label>{input.label}</Label>
+            <Input
+              key={input.value}
+              type="number"
+              value={exercise[input.value] || 0}
+              onChange={(e) =>
+                handleChange(input.value, Number(e.target.value))
+              }
+              placeholder={input.placeholder}
+              className="w-full"
+            />
+          </div>
+        ))}
+      </div>
 
       <Button
         type="button"
         variant="ghost"
         size="icon"
+        className="mt-auto hidden lg:block"
         onClick={() => onRemove(index)}
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="size-4" />
       </Button>
     </div>
   )

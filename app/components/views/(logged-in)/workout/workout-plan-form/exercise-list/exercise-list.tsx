@@ -2,8 +2,9 @@ import { type DropResult, DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { Plus } from 'lucide-react'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
+import { cn } from '~/lib/utils'
 import type { Database } from '~/types/database.types'
-import { NoDataFound } from '../no-data-found/no-data-found'
+import { NoDataFound } from '../../../../../shared/no-data-found/no-data-found'
 import { ExerciseItem } from './exercise-item'
 
 type Exercise = Database['public']['Tables']['workout_exercises']['Row']
@@ -26,7 +27,7 @@ export function ExerciseList({
     onExercisesChange([
       ...exercises,
       {
-        id: Date.now().toString(),
+        id: crypto.randomUUID(),
         exercise_id: null,
         sets: 3,
         reps: 10,
@@ -102,7 +103,7 @@ export function ExerciseList({
   )
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={cn('space-y-4', className)}>
       <div className="flex items-center justify-between">
         <Label>Exercises</Label>
         <Button

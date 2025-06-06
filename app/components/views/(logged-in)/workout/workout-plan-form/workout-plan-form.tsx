@@ -4,20 +4,22 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { z } from 'zod'
 
-import { ExerciseList } from '~/components/shared/exercise-list/exercise-list'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
+import { ExerciseList } from '~/components/views/(logged-in)/workout/workout-plan-form/exercise-list/exercise-list'
 import { workoutsService } from '~/services/api/workouts/workoutsService'
 import type { Database } from '~/types/database.types'
 
 type Workout = Database['public']['Tables']['workouts']['Row']
 type Exercise = Database['public']['Tables']['workout_exercises']['Row']
+type WorkoutInsert = Database['public']['Tables']['workouts']['Insert']
 type WorkoutPlanFormProps = {
   userId: string
   plan?: (Workout & { workout_exercises: Exercise[] }) | null
 }
+type FormData = z.infer<typeof schema>
 
 const schema = z.object({
   user_id: z.string(),
@@ -39,8 +41,6 @@ const schema = z.object({
     })
   )
 })
-
-type FormData = z.infer<typeof schema>
 
 export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
   const navigate = useNavigate()
@@ -69,7 +69,7 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const workoutData: Database['public']['Tables']['workouts']['Insert'] = {
+      const workoutData: WorkoutInsert = {
         name: data.name,
         description: data.description,
         user_id: data.user_id

@@ -91,9 +91,12 @@ export const workoutsService = {
       .map((e) => e.id)
       .filter((id): id is string => id !== undefined)
 
+    console.log(exercises)
+
     const { data, error } = await client
       .from('workout_exercises')
       .update({
+        ...exercises,
         user_id,
         updated_at: new Date().toISOString()
       })
