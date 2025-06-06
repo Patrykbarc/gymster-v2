@@ -60,7 +60,10 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
   })
 
   const [exercises, setExercises] = useState<Exercise[]>(
-    plan?.workout_exercises || []
+    plan?.workout_exercises?.map((exercise) => ({
+      ...exercise,
+      workout_id: plan.id
+    })) || []
   )
 
   useEffect(() => {
@@ -81,11 +84,8 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
 
       if (workout && exercises.length > 0) {
         const workoutExercises = exercises.map((exercise, index) => ({
-          workout_id: workout.id,
-          exercise_id: exercise.exercise_id,
-          sets: exercise.sets,
-          reps: exercise.reps,
-          weight: exercise.weight,
+          ...exercise,
+          workout_id: plan?.id || workout.id,
           order_position: index + 1
         }))
 
@@ -143,6 +143,7 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
         exercises={exercises}
         onExercisesChange={setExercises}
         draggable
+        workoutId={plan?.id || null}
       />
       {errors.exercises && (
         <p className="text-sm text-red-500">{errors.exercises.message}</p>

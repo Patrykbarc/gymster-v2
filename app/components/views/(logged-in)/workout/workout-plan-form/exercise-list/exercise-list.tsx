@@ -14,14 +14,20 @@ type ExerciseListProps = {
   onExercisesChange: (exercises: Exercise[]) => void
   draggable?: boolean
   className?: string
+  workoutId?: string | null
 }
 
 export function ExerciseList({
   exercises,
   onExercisesChange,
   draggable = false,
-  className
+  className,
+  workoutId = null
 }: ExerciseListProps) {
+  const sortedExercises = [...exercises].sort(
+    (a, b) => a.order_position - b.order_position
+  )
+
   const handleAddExercise = () => {
     const now = new Date().toISOString()
     onExercisesChange([
@@ -34,7 +40,7 @@ export function ExerciseList({
         weight: 100,
         notes: null,
         order_position: exercises.length + 1,
-        workout_id: null,
+        workout_id: workoutId,
         user_id: null,
         created_at: now,
         updated_at: now
@@ -67,7 +73,6 @@ export function ExerciseList({
     const [reorderedItem] = items.splice(result.source.index, 1)
     items.splice(result.destination.index, 0, reorderedItem)
 
-    // Update order_position for all items
     const updatedItems = items.map((item, index) => ({
       ...item,
       order_position: index + 1,
@@ -79,7 +84,7 @@ export function ExerciseList({
 
   const renderExercises = () => (
     <div>
-      {exercises.map((exercise, index) => (
+      {sortedExercises.map((exercise, index) => (
         <ExerciseItem
           key={exercise.id}
           exercise={exercise}
@@ -89,7 +94,7 @@ export function ExerciseList({
           draggable={draggable}
         />
       ))}
-      {exercises.length === 0 && (
+      {sortedExercises.length === 0 && (
         <NoDataFound
           message={
             <>
