@@ -24,7 +24,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const workout = await workoutsService
     .getWorkoutById(request, workoutId)
-    .then((workout) => workout?.[0])
+    .then((workout) => workout?.[0] || null)
   const { session } = await authService.getUser(request)
 
   if (!session?.user_id) {
@@ -36,6 +36,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export default function EditWorkoutPlanPage() {
   const { workout, userId } = useLoaderData<typeof loader>()
+
   return (
     <div className="space-y-6">
       <Card>

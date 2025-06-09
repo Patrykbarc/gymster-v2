@@ -1,21 +1,27 @@
 import { type DropResult, DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { Plus } from 'lucide-react'
+import { NoDataFound } from '~/components/shared/no-data-found/no-data-found'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
-import type { Database } from '~/types/database.types'
-import { NoDataFound } from '../../../../../shared/no-data-found/no-data-found'
+import type {
+  ExerciseSet,
+  WorkoutExerciseWithSets
+} from '~/types/workouts.types'
 import { ExerciseItem } from './exercise-item'
 
-type Exercise = Database['public']['Tables']['workout_exercises']['Row']
-
 type ExerciseListProps = {
-  exercises: Exercise[]
-  onExercisesChange: (exercises: Exercise[]) => void
+  exercises: WorkoutExerciseWithSets[]
+  onExercisesChange: (exercises: WorkoutExerciseWithSets[]) => void
   draggable?: boolean
   className?: string
   workoutId?: string | null
 }
+
+type ExerciseChangeField =
+  | keyof Omit<WorkoutExerciseWithSets, 'exercise_sets'>
+  | 'exercise_sets'
+type ExerciseChangeValue = string | number | null | ExerciseSet[]
 
 export function ExerciseList({
   exercises,
@@ -35,23 +41,21 @@ export function ExerciseList({
       {
         id: crypto.randomUUID(),
         exercise_id: null,
-        sets: 3,
-        reps: 10,
-        weight: 100,
         notes: null,
         order_position: sortedExercises.length + 1,
         workout_id: workoutId,
         user_id: null,
         created_at: now,
-        updated_at: now
+        updated_at: now,
+        exercise_sets: []
       }
     ])
   }
 
   const handleExerciseChange = (
     index: number,
-    field: keyof Exercise,
-    value: string | number | null
+    field: ExerciseChangeField,
+    value: ExerciseChangeValue
   ) => {
     const updatedExercises = [...sortedExercises]
     updatedExercises[index] = {
@@ -105,8 +109,8 @@ export function ExerciseList({
         <NoDataFound
           message={
             <>
-              "No exercises added. Click &quot;Add Exercise&quot; to start
-              building your plan."
+              No exercises added. Click &quot;Add Exercise&quot; to start
+              building your plan.
             </>
           }
         />

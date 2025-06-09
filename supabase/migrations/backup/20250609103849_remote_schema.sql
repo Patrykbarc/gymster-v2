@@ -123,6 +123,22 @@ CREATE TABLE IF NOT EXISTS "public"."exercise_logs" (
 ALTER TABLE "public"."exercise_logs" OWNER TO "postgres";
 
 
+CREATE TABLE IF NOT EXISTS "public"."exercise_sets" (
+    "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
+    "workout_exercise_id" "uuid" NOT NULL,
+    "reps" integer,
+    "weight" integer,
+    "order_position" integer NOT NULL,
+    "notes" "text",
+    "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
+    CONSTRAINT "exercise_sets_weight_check" CHECK (("weight" > 0))
+);
+
+
+ALTER TABLE "public"."exercise_sets" OWNER TO "postgres";
+
+
 CREATE TABLE IF NOT EXISTS "public"."exercises" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "name" "text" NOT NULL,
@@ -162,15 +178,11 @@ CREATE TABLE IF NOT EXISTS "public"."workout_exercises" (
     "id" "uuid" DEFAULT "extensions"."uuid_generate_v4"() NOT NULL,
     "workout_id" "uuid",
     "exercise_id" "uuid",
-    "sets" integer,
-    "reps" integer,
     "order_position" integer NOT NULL,
     "notes" "text",
     "created_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
     "updated_at" timestamp with time zone DEFAULT "timezone"('utc'::"text", "now"()) NOT NULL,
-    "weight" integer,
-    "user_id" "uuid",
-    CONSTRAINT "workout_exercises_weight_check" CHECK (("weight" > 0))
+    "user_id" "uuid"
 );
 
 
@@ -209,6 +221,11 @@ ALTER TABLE "public"."workouts" OWNER TO "postgres";
 
 ALTER TABLE ONLY "public"."exercise_logs"
     ADD CONSTRAINT "exercise_logs_pkey" PRIMARY KEY ("id");
+
+
+
+ALTER TABLE ONLY "public"."exercise_sets"
+    ADD CONSTRAINT "exercise_sets_pkey" PRIMARY KEY ("id");
 
 
 
@@ -262,6 +279,10 @@ CREATE OR REPLACE TRIGGER "update_exercise_logs_updated_at" BEFORE UPDATE ON "pu
 
 
 
+CREATE OR REPLACE TRIGGER "update_exercise_sets_updated_at" BEFORE UPDATE ON "public"."exercise_sets" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at_column"();
+
+
+
 CREATE OR REPLACE TRIGGER "update_exercises_updated_at" BEFORE UPDATE ON "public"."exercises" FOR EACH ROW EXECUTE FUNCTION "public"."update_updated_at_column"();
 
 
@@ -289,6 +310,11 @@ ALTER TABLE ONLY "public"."exercise_logs"
 
 ALTER TABLE ONLY "public"."exercise_logs"
     ADD CONSTRAINT "exercise_logs_workout_log_id_fkey" FOREIGN KEY ("workout_log_id") REFERENCES "public"."workout_logs"("id") ON DELETE CASCADE;
+
+
+
+ALTER TABLE ONLY "public"."exercise_sets"
+    ADD CONSTRAINT "exercise_sets_workout_exercise_id_fkey" FOREIGN KEY ("workout_exercise_id") REFERENCES "public"."workout_exercises"("id") ON DELETE CASCADE;
 
 
 
@@ -332,15 +358,19 @@ ALTER TABLE ONLY "public"."workouts"
 
 
 
+DROP POLICY IF EXISTS "Enable insert for authenticated users only" ON "public"."exercise_sets";
+
+
+
+CREATE POLICY "Users can manage their own exercise sets" ON "public"."exercise_sets"
+  FOR ALL
+  TO authenticated
+  USING ((auth.uid() = ( SELECT user_id FROM workout_exercises WHERE id = workout_exercise_id )))
+  WITH CHECK ((auth.uid() = ( SELECT user_id FROM workout_exercises WHERE id = workout_exercise_id )));
+
+
+
 CREATE POLICY "Enable delete for users based on user_id" ON "public"."exercises" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
-
-
-
-CREATE POLICY "Enable delete for users based on user_id" ON "public"."workout_exercises" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
-
-
-
-CREATE POLICY "Enable delete for users based on user_id" ON "public"."workouts" FOR DELETE USING ((( SELECT "auth"."uid"() AS "uid") = "user_id"));
 
 
 
@@ -413,6 +443,9 @@ CREATE POLICY "Users can view own exercise logs" ON "public"."exercise_logs" FOR
 
 
 ALTER TABLE "public"."exercise_logs" ENABLE ROW LEVEL SECURITY;
+
+
+ALTER TABLE "public"."exercise_sets" ENABLE ROW LEVEL SECURITY;
 
 
 ALTER TABLE "public"."exercises" ENABLE ROW LEVEL SECURITY;
@@ -634,6 +667,12 @@ GRANT ALL ON FUNCTION "public"."update_updated_at_column"() TO "service_role";
 GRANT ALL ON TABLE "public"."exercise_logs" TO "anon";
 GRANT ALL ON TABLE "public"."exercise_logs" TO "authenticated";
 GRANT ALL ON TABLE "public"."exercise_logs" TO "service_role";
+
+
+
+GRANT ALL ON TABLE "public"."exercise_sets" TO "anon";
+GRANT ALL ON TABLE "public"."exercise_sets" TO "authenticated";
+GRANT ALL ON TABLE "public"."exercise_sets" TO "service_role";
 
 
 

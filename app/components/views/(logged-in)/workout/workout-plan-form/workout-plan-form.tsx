@@ -10,16 +10,26 @@ import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { ExerciseList } from '~/components/views/(logged-in)/workout/workout-plan-form/exercise-list/exercise-list'
 import { workoutsService } from '~/services/api/workouts/workoutsService'
-import type { Database } from '~/types/database.types'
+import type {
+  WorkoutExerciseWithSets,
+  WorkoutWithExercises
+} from '~/types/workouts.types'
 
-type Workout = Database['public']['Tables']['workouts']['Row']
-type Exercise = Database['public']['Tables']['workout_exercises']['Row']
-type WorkoutInsert = Database['public']['Tables']['workouts']['Insert']
 type WorkoutPlanFormProps = {
   userId: string
-  plan?: (Workout & { workout_exercises: Exercise[] }) | null
+  plan?: WorkoutWithExercises | null
 }
-type FormData = z.infer<typeof schema>
+
+const exerciseSetSchema = z.object({
+  id: z.string().optional(),
+  reps: z.number().nullable(),
+  weight: z.number().nullable(),
+  notes: z.string().nullable(),
+  order_position: z.number(),
+  workout_exercise_id: z.string().optional(),
+  created_at: z.string().optional(),
+  updated_at: z.string().optional()
+})
 
 const schema = z.object({
   user_id: z.string(),
@@ -29,18 +39,18 @@ const schema = z.object({
     z.object({
       id: z.string(),
       exercise_id: z.string().nullable(),
-      sets: z.number().nullable(),
-      reps: z.number().nullable(),
-      weight: z.number().nullable(),
       order_position: z.number(),
       workout_id: z.string().nullable(),
       user_id: z.string().nullable(),
       created_at: z.string(),
       updated_at: z.string(),
-      notes: z.string().nullable()
+      notes: z.string().nullable(),
+      exercise_sets: z.array(exerciseSetSchema)
     })
   )
 })
+
+type FormData = z.infer<typeof schema>
 
 export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
   const navigate = useNavigate()
@@ -59,10 +69,11 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
     }
   })
 
-  const [exercises, setExercises] = useState<Exercise[]>(
+  const [exercises, setExercises] = useState<WorkoutExerciseWithSets[]>(
     plan?.workout_exercises?.map((exercise) => ({
       ...exercise,
-      workout_id: plan.id
+      workout_id: plan.id,
+      exercise_sets: exercise.exercise_sets || []
     })) || []
   )
 
@@ -72,7 +83,8 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      const workoutData: WorkoutInsert = {
+      // Create or update workout
+      const workoutData = {
         name: data.name,
         description: data.description,
         user_id: data.user_id
@@ -82,22 +94,27 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
         ? await workoutsService.updateWorkout(plan.id, workoutData)
         : await workoutsService.insertWorkout(workoutData)
 
-      if (workout && exercises.length > 0) {
+      if (!workout) {
+        throw new Error('Failed to save workout')
+      }
+
+      // Update exercises if we have any
+      if (exercises.length > 0) {
         const workoutExercises = exercises.map((exercise, index) => ({
           ...exercise,
-          workout_id: plan?.id || workout.id,
+          workout_id: workout.id,
           order_position: index + 1
         }))
 
-        plan?.id
-          ? await workoutsService.updateWorkoutExercises(
-              workoutExercises,
-              data.user_id
-            )
-          : await workoutsService.insertWorkoutExercises(
-              workoutExercises,
-              data.user_id
-            )
+        // Update or insert exercises with their sets
+        const savedExercises = await workoutsService.updateWorkoutExercises(
+          workoutExercises,
+          data.user_id
+        )
+
+        if (!savedExercises) {
+          throw new Error('Failed to save exercises')
+        }
       }
 
       navigate('/dashboard/workouts')
@@ -106,7 +123,7 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
     }
   }
 
-  const onError = async (errors: any) => {
+  const onError = (errors: any) => {
     console.error('Form validation errors:', errors)
   }
 
