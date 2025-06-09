@@ -1,5 +1,5 @@
 import { Draggable } from '@hello-pangea/dnd'
-import { GripVertical, Plus, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, GripVertical, Plus, Trash2 } from 'lucide-react'
 import { useLoaderData } from 'react-router'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
@@ -11,7 +11,6 @@ import {
   SelectTrigger,
   SelectValue
 } from '~/components/ui/select'
-import { cn } from '~/lib/utils'
 import type { loader } from '~/routes/(logged-in)/workout/edit-workout-plan'
 import type {
   ExerciseSet,
@@ -66,6 +65,33 @@ export function ExerciseItem({
     handleChange('exercise_sets', [...(exercise.exercise_sets || []), newSet])
   }
 
+  function handleRemoveSet(setIndex: number) {
+    const updatedSets = (exercise.exercise_sets || [])
+      .filter((_, i) => i !== setIndex)
+      .map((set, i) => ({ ...set, order_position: i + 1 }))
+    handleChange('exercise_sets', updatedSets)
+  }
+
+  function handleMoveSet(setIndex: number, direction: 'up' | 'down') {
+    const sets = [...(exercise.exercise_sets || [])]
+    if (
+      (direction === 'up' && setIndex === 0) ||
+      (direction === 'down' && setIndex === sets.length - 1)
+    ) {
+      return
+    }
+
+    const newIndex = direction === 'up' ? setIndex - 1 : setIndex + 1
+    const [movedSet] = sets.splice(setIndex, 1)
+    sets.splice(newIndex, 0, movedSet)
+
+    const updatedSets = sets.map((set, i) => ({
+      ...set,
+      order_position: i + 1
+    }))
+    handleChange('exercise_sets', updatedSets)
+  }
+
   function handleSetChange(
     setIndex: number,
     field: keyof Omit<
@@ -85,7 +111,7 @@ export function ExerciseItem({
 
   const renderContent = () => (
     <div className="flex flex-col justify-between gap-4 rounded-lg border p-4">
-      <div className="flex w-full items-center gap-2">
+      <div className="mb-2 flex w-full items-center gap-2">
         {draggable && (
           <GripVertical className="size-5 cursor-grab text-gray-500" />
         )}
@@ -105,20 +131,19 @@ export function ExerciseItem({
           </SelectContent>
         </Select>
 
-        <RemoveExercise
-          onRemove={onRemove}
-          index={index}
-          className="lg:hidden"
-        />
+        <RemoveExercise className="ms-auto" onRemove={onRemove} index={index} />
       </div>
 
       <div className="space-y-4">
         {exercise.exercise_sets?.map((set, setIndex) => (
-          <div key={setIndex} className="grid grid-cols-3 gap-2 border-b pb-4">
-            <div className="col-span-1 space-y-2">
+          <div
+            key={setIndex}
+            className="grid grid-cols-12 items-end gap-2 border-b border-gray-100 pb-4"
+          >
+            <div className="col-span-2 mb-auto space-y-2">
               <Label>Set {set.order_position}</Label>
             </div>
-            <div className="col-span-1 space-y-2">
+            <div className="col-span-3 space-y-2">
               <Label>Reps</Label>
               <Input
                 type="number"
@@ -134,7 +159,7 @@ export function ExerciseItem({
                 className="w-full"
               />
             </div>
-            <div className="col-span-1 space-y-2">
+            <div className="col-span-3 space-y-2">
               <Label>Weight</Label>
               <Input
                 type="number"
@@ -150,6 +175,36 @@ export function ExerciseItem({
                 className="w-full"
               />
             </div>
+            <div className="col-span-4 flex items-center justify-end gap-1">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => handleMoveSet(setIndex, 'up')}
+                disabled={setIndex === 0}
+              >
+                <ArrowUp className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => handleMoveSet(setIndex, 'down')}
+                disabled={
+                  setIndex === (exercise.exercise_sets?.length || 0) - 1
+                }
+              >
+                <ArrowDown className="size-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={() => handleRemoveSet(setIndex)}
+              >
+                <Trash2 className="size-4 text-red-500" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
@@ -164,12 +219,6 @@ export function ExerciseItem({
         >
           <Plus className="mr-2 size-4" /> Add Set
         </Button>
-
-        <RemoveExercise
-          onRemove={onRemove}
-          index={index}
-          className="mt-2 hidden lg:block"
-        />
       </div>
     </div>
   )
@@ -206,8 +255,8 @@ function RemoveExercise({
       type="button"
       variant="ghost"
       size="icon"
-      className={cn(className)}
       onClick={() => onRemove(index)}
+      className={className}
     >
       <Trash2 className="size-4" />
     </Button>

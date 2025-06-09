@@ -83,7 +83,6 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
 
   const onSubmit = async (data: FormData) => {
     try {
-      // Create or update workout
       const workoutData = {
         name: data.name,
         description: data.description,
@@ -98,7 +97,6 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
         throw new Error('Failed to save workout')
       }
 
-      // Update exercises if we have any
       if (exercises.length > 0) {
         const workoutExercises = exercises.map((exercise, index) => ({
           ...exercise,
@@ -106,7 +104,6 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
           order_position: index + 1
         }))
 
-        // Update or insert exercises with their sets
         const savedExercises = await workoutsService.updateWorkoutExercises(
           workoutExercises,
           data.user_id
