@@ -7,6 +7,7 @@ import { handleApiError } from '~/utils/handleApiError'
 type AuthState = {
   user: User | null
   isLoading: boolean
+  getSession: () => Promise<void>
   signUp: (
     email: string,
     password: string,
@@ -19,7 +20,23 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  isLoading: false,
+  isLoading: true,
+
+  getSession: async () => {
+    set({ isLoading: true })
+    try {
+      const { data, error } = await authService.getSession()
+      if (error) {
+        handleApiError(error)
+        throw error
+      }
+      set({ user: data.session?.user || null })
+    } catch (error) {
+      handleApiError(error)
+    } finally {
+      set({ isLoading: false })
+    }
+  },
 
   signUp: async (email, password, userData) => {
     set({ isLoading: true })

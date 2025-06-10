@@ -37,5 +37,9 @@ export const authService = {
 
   signOut: async () => {
     return await client.auth.signOut()
+  },
+
+  getSession: async () => {
+    return await client.auth.getSession()
   }
 }

@@ -10,10 +10,12 @@ import {
   type LoaderFunctionArgs
 } from 'react-router'
 
+import { useEffect } from 'react'
 import type { Route } from './+types/root'
 import './app.css'
 import { useAuthStateChange } from './hooks/useAuthStateChange'
 import { authService } from './services/api/auth/authService'
+import { useAuthStore } from './store/authStore'
 
 export const links: Route.LinksFunction = () => [
   { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -58,6 +60,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export function Layout({ children }: { children: React.ReactNode }) {
   useLoaderData<typeof loader>()
   useAuthStateChange()
+  const getSession = useAuthStore((state) => state.getSession)
+
+  useEffect(() => {
+    getSession()
+  }, [getSession])
 
   return (
     <html lang="en">

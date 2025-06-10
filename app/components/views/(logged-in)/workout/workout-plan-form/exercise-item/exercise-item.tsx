@@ -15,6 +15,7 @@ import { type Field, type Value } from '~/types/workouts.types'
 import { useHandleSet } from '../../_hooks/useHandleSet'
 import { ExerciseItemContent } from './exercise-item-content/exercise-item-content'
 import { RemoveExercise } from './remove-exercise/remove-exercise'
+import { ExerciseSelect } from './exercise-select/exercise-select'
 
 type ExerciseItemProps = {
   exercise: WorkoutExerciseWithSets
@@ -51,7 +52,6 @@ function renderContent({
   onExerciseChange,
   onRemove
 }: ExerciseItemProps) {
-  const { exercises } = useLoaderData<typeof loader>()
   const { handleChange, handleAddSet } = useHandleSet({
     exercise,
     index,
@@ -62,21 +62,7 @@ function renderContent({
     <div className="flex flex-col justify-between gap-4 rounded-lg border p-4">
       <div className="flex w-full items-center gap-2">
         <GripVertical className="size-5 cursor-grab text-gray-500" />
-        <Select
-          value={exercise.exercise_id || ''}
-          onValueChange={(value) => handleChange('exercise_id', value)}
-        >
-          <SelectTrigger className="w-full lg:w-[300px]">
-            <SelectValue placeholder="Select exercise" />
-          </SelectTrigger>
-          <SelectContent>
-            {exercises?.map((ex) => (
-              <SelectItem key={ex.id} value={ex.id}>
-                {ex.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <ExerciseSelect exercise={exercise} handleChange={handleChange} />
 
         <RemoveExercise onRemove={onRemove} index={index} />
       </div>
@@ -101,3 +87,4 @@ function renderContent({
     </div>
   )
 }
+
