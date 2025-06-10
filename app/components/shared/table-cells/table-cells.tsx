@@ -1,20 +1,10 @@
 import { ChevronDown, Edit, Play, Trash2 } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { Link, useRevalidator } from 'react-router'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger
-} from '~/components/ui/alert-dialog'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { TableCell } from '~/components/ui/table'
 import { cn } from '~/lib/utils'
+import { Dialog } from '../dialog/dialog'
 
 type DefaultCellProps = {
   className?: string
@@ -146,24 +136,12 @@ function DeleteAction({
   }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <Trash2 className="h-4 w-4" />
-          <span className="sr-only">Delete</span>
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <Dialog title="Delete" description={description} callback={handleDelete}>
+      <Button variant="ghost" size="icon">
+        <Trash2 className="h-4 w-4" />
+        <span className="sr-only">Delete</span>
+      </Button>
+    </Dialog>
   )
 }
 

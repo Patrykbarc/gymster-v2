@@ -1,12 +1,6 @@
 import type { LoaderFunctionArgs } from 'react-router'
 import { redirect, useLoaderData } from 'react-router'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { FormCardWrapper } from '~/components/shared/form-card-wrapper/form-card-wrapper'
 import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form/exercise-form'
 import { authService } from '~/services/api/auth/authService'
 
@@ -26,16 +20,11 @@ export default function NewExercisePage() {
   const { user_id } = useLoaderData<typeof loader>()
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Exercise Details</CardTitle>
-        <CardDescription>
-          Fill in the details for your new exercise
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <ExerciseForm userId={user_id} />
-      </CardContent>
-    </Card>
+    <FormCardWrapper
+      title="Exercise Details"
+      description="Fill in the details for your new exercise"
+    >
+      <ExerciseForm userId={user_id} />
+    </FormCardWrapper>
   )
 }

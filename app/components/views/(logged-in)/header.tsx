@@ -35,12 +35,7 @@ const getHeaderData: HeaderDataStructure = {
   },
   '/dashboard/exercises/new': {
     title: 'New Exercise',
-    description: 'Fill in the details for your new exercise',
-    button: {
-      icon: <Plus />,
-      text: 'Add Exercise',
-      href: 'exercises/new'
-    }
+    description: 'Fill in the details for your new exercise'
   },
   '/dashboard/exercises/edit/:exerciseId': {
     title: 'Edit Exercise',

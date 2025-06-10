@@ -1,4 +1,5 @@
 import { Trash2 } from 'lucide-react'
+import { Dialog } from '~/components/shared/dialog/dialog'
 import { Button } from '~/components/ui/button'
 
 type RemoveExerciseProps = {
@@ -7,20 +8,16 @@ type RemoveExerciseProps = {
   className?: string
 }
 
-export function RemoveExercise({
-  onRemove,
-  index,
-  className
-}: RemoveExerciseProps) {
+export function RemoveExercise({ onRemove, index }: RemoveExerciseProps) {
   return (
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon"
-      onClick={() => onRemove(index)}
-      className={className}
+    <Dialog
+      title="Remove Exercise"
+      description="This action cannot be undone."
+      callback={() => onRemove(index)}
     >
-      <Trash2 className="size-4" />
-    </Button>
+      <Button type="button" variant="ghost" size="icon" className="ms-auto">
+        <Trash2 className="size-4" />
+      </Button>
+    </Dialog>
   )
 }

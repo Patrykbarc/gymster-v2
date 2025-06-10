@@ -63,7 +63,12 @@ const tableConfig: TableConfig = {
         <EditAction link={`edit/${workout.id}`} />
         <DeleteAction
           callback={async () => await workoutsService.deleteWorkout(workout.id)}
-          description={`This will permanently delete the workout &quot;${workout.name}&quot;. This action cannot be undone.`}
+          description={
+            <>
+              This will permanently delete the workout &quot;{workout.name}
+              &quot;. This action cannot be undone.
+            </>
+          }
         />
       </ActionCell>
     )

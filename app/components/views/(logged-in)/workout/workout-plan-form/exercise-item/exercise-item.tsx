@@ -78,7 +78,7 @@ function renderContent({
           </SelectContent>
         </Select>
 
-        <RemoveExercise className="ms-auto" onRemove={onRemove} index={index} />
+        <RemoveExercise onRemove={onRemove} index={index} />
       </div>
 
       <ExerciseItemContent

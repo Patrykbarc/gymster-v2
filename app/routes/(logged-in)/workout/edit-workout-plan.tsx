@@ -1,11 +1,5 @@
 import { redirect, useLoaderData, type LoaderFunctionArgs } from 'react-router'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
-} from '~/components/ui/card'
+import { FormCardWrapper } from '~/components/shared/form-card-wrapper/form-card-wrapper'
 import { WorkoutPlanForm } from '~/components/views/(logged-in)/workout/workout-plan-form/workout-plan-form'
 import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
@@ -38,18 +32,11 @@ export default function EditWorkoutPlanPage() {
   const { workout, userId } = useLoaderData<typeof loader>()
 
   return (
-    <div className="max-w-4xl space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Plan Details</CardTitle>
-          <CardDescription>
-            Fill in the details and add exercises to your plan
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <WorkoutPlanForm userId={userId} plan={workout} />
-        </CardContent>
-      </Card>
-    </div>
+    <FormCardWrapper
+      title="Plan Details"
+      description="Fill in the details and add exercises to your plan"
+    >
+      <WorkoutPlanForm userId={userId} plan={workout} />
+    </FormCardWrapper>
   )
 }

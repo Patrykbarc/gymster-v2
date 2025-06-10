@@ -1,4 +1,5 @@
 import { redirect, useLoaderData, type LoaderFunctionArgs } from 'react-router'
+import { FormCardWrapper } from '~/components/shared/form-card-wrapper/form-card-wrapper'
 import { ExerciseForm } from '~/components/views/(logged-in)/exercises/exercise-form/exercise-form'
 import { authService } from '~/services/api/auth/authService'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
@@ -24,5 +25,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export default function EditExercise() {
   const { exercise, user_id } = useLoaderData<typeof loader>()
 
-  return <ExerciseForm exercise={exercise} userId={user_id} />
+  return (
+    <FormCardWrapper
+      title="Exercise Details"
+      description="Fill in the details and add exercises to your plan"
+    >
+      <ExerciseForm exercise={exercise} userId={user_id} />
+    </FormCardWrapper>
+  )
 }

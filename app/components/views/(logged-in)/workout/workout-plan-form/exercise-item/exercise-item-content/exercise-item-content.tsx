@@ -1,8 +1,10 @@
 import { ArrowDown, ArrowUp, Trash2 } from 'lucide-react'
+import { Dialog } from '~/components/shared/dialog/dialog'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import type {
+  ExerciseSet,
   Field,
   Value,
   WorkoutExerciseWithSets
@@ -33,43 +35,12 @@ export function ExerciseItemContent({
           key={setIndex}
           className="flex justify-between gap-2 border-b border-gray-100 pb-4"
         >
-          <div className="my-auto mr-6 space-y-2">
-            <Label className="text-md">Set {set.order_position}</Label>
-          </div>
-          <div className="space-y-2">
-            <Label>Reps</Label>
-            <Input
-              type="number"
-              value={set.reps || ''}
-              min={1}
-              onChange={(e) =>
-                handleSetChange(
-                  setIndex,
-                  'reps',
-                  e.target.value ? Number(e.target.value) : null
-                )
-              }
-              placeholder="Reps"
-              className="w-full"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Weight</Label>
-            <Input
-              type="number"
-              value={set.weight || ''}
-              min={1}
-              onChange={(e) =>
-                handleSetChange(
-                  setIndex,
-                  'weight',
-                  e.target.value ? Number(e.target.value) : null
-                )
-              }
-              placeholder="Weight"
-              className="w-full"
-            />
-          </div>
+          <SetInputs
+            set={set}
+            setIndex={setIndex}
+            handleSetChange={handleSetChange}
+          />
+
           <SetControls
             setIndex={setIndex}
             exercise={exercise}
@@ -78,6 +49,66 @@ export function ExerciseItemContent({
           />
         </div>
       ))}
+    </div>
+  )
+}
+
+type SetField = keyof Pick<
+  ExerciseSet,
+  'reps' | 'weight' | 'notes' | 'order_position'
+>
+
+type SetInputsProps = {
+  set: WorkoutExerciseWithSets['exercise_sets'][number]
+  setIndex: number
+  handleSetChange: (
+    setIndex: number,
+    field: SetField,
+    value: number | null
+  ) => void
+}
+
+function SetInputs({ set, setIndex, handleSetChange }: SetInputsProps) {
+  return (
+    <div className="flex w-full gap-2">
+      <div className="my-auto ml-2 mr-6 space-y-2">
+        <Label className="text-md text-nowrap">Set {set.order_position}</Label>
+      </div>
+
+      <div className="w-full space-y-2">
+        <Label>Reps</Label>
+        <Input
+          type="number"
+          value={set.reps || ''}
+          min={1}
+          onChange={(e) =>
+            handleSetChange(
+              setIndex,
+              'reps',
+              e.target.value ? Number(e.target.value) : null
+            )
+          }
+          placeholder="Reps"
+          className="w-full"
+        />
+      </div>
+      <div className="w-full space-y-2">
+        <Label>Weight</Label>
+        <Input
+          type="number"
+          value={set.weight || ''}
+          min={1}
+          onChange={(e) =>
+            handleSetChange(
+              setIndex,
+              'weight',
+              e.target.value ? Number(e.target.value) : null
+            )
+          }
+          placeholder="Weight"
+          className="w-full"
+        />
+      </div>
     </div>
   )
 }
@@ -115,14 +146,16 @@ function SetControls({
       >
         <ArrowDown className="size-4" />
       </Button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        onClick={() => handleRemoveSet(setIndex)}
+
+      <Dialog
+        title="Remove Set"
+        description={`Are you sure you want to remove set ${setIndex + 1}?`}
+        callback={() => handleRemoveSet(setIndex)}
       >
-        <Trash2 className="size-4 text-red-500" />
-      </Button>
+        <Button type="button" variant="ghost" size="icon">
+          <Trash2 className="size-4 text-red-500" />
+        </Button>
+      </Dialog>
     </div>
   )
 }
