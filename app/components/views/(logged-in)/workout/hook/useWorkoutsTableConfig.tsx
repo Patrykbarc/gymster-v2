@@ -7,20 +7,21 @@ import {
   StartWorkoutAction
 } from '~/components/shared/table-cells/table-cells'
 import { Badge } from '~/components/ui/badge'
-import {
-  workoutsService,
-  type Workouts
-} from '~/services/api/workouts/workoutsService'
+import { workoutsService } from '~/services/api/workouts/workoutsService'
+import type { Workout } from '~/types/workouts.types'
 
-type WorkoutsWithActions = Partial<Workouts> & {
+type WorkoutExercisesCount = { count: number }
+type WorkoutsWithActions = Partial<Workout> & {
   actions: string
-  workout_exercises: string
+  workout_exercises: WorkoutExercisesCount[]
 }
 
 type TableConfig = {
   [key in keyof WorkoutsWithActions]: {
     head: string
-    value: (workout: Workouts) => string | React.ReactNode
+    value: (
+      workout: Workout & { workout_exercises: WorkoutExercisesCount[] }
+    ) => string | React.ReactNode
   }
 }
 
@@ -48,13 +49,11 @@ const tableConfig: TableConfig = {
   },
   workout_exercises: {
     head: 'Exercises',
-    value: (workout) => {
-      return (
-        <DefaultCell className="font-medium">
-          <Badge variant="outline">{workout.workout_exercises[0]?.count}</Badge>
-        </DefaultCell>
-      )
-    }
+    value: (workout) => (
+      <DefaultCell className="font-medium">
+        <Badge variant="outline">{workout.workout_exercises?.length}</Badge>
+      </DefaultCell>
+    )
   },
   actions: {
     head: 'Actions',

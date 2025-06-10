@@ -4,11 +4,9 @@ import { NoDataFound } from '~/components/shared/no-data-found/no-data-found'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
-import type {
-  ExerciseSet,
-  WorkoutExerciseWithSets
-} from '~/types/workouts.types'
-import { ExerciseItem } from './exercise-item'
+import type { WorkoutExerciseWithSets } from '~/types/workouts.types'
+import type { Field, Value } from '../../hook/useHandleSet'
+import { ExerciseItem } from '../exercise-item/exercise-item'
 
 type ExerciseListProps = {
   exercises: WorkoutExerciseWithSets[]
@@ -17,11 +15,6 @@ type ExerciseListProps = {
   className?: string
   workoutId?: string | null
 }
-
-type ExerciseChangeField =
-  | keyof Omit<WorkoutExerciseWithSets, 'exercise_sets'>
-  | 'exercise_sets'
-type ExerciseChangeValue = string | number | null | ExerciseSet[]
 
 export function ExerciseList({
   exercises,
@@ -52,11 +45,7 @@ export function ExerciseList({
     ])
   }
 
-  const handleExerciseChange = (
-    index: number,
-    field: ExerciseChangeField,
-    value: ExerciseChangeValue
-  ) => {
+  const handleExerciseChange = (index: number, field: Field, value: Value) => {
     const updatedExercises = [...sortedExercises]
     updatedExercises[index] = {
       ...updatedExercises[index],
