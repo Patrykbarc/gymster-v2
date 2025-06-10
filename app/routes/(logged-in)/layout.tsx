@@ -1,3 +1,4 @@
+import { Toaster } from 'react-hot-toast'
 import { Outlet } from 'react-router'
 import { SidebarProvider, SidebarTrigger } from '~/components/ui/sidebar'
 import { AppSidebar } from '~/components/views/(logged-in)/app-sidebar'
@@ -6,6 +7,7 @@ import { Header } from '~/components/views/(logged-in)/header'
 export default function DashboardLayout() {
   return (
     <main>
+      <Toaster />
       <SidebarProvider>
         <AppSidebar />
         <SidebarTrigger className="fixed right-0 p-6 md:hidden" />

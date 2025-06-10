@@ -1,5 +1,6 @@
 import { CheckIcon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 import { useLoaderData, useRevalidator } from 'react-router'
 import { Button } from '~/components/ui/button'
 import {
@@ -54,15 +55,25 @@ export function ExerciseSelect({
   async function handleAddNewExercise() {
     setOpen(false)
 
-    const newExercise = await exercisesService.insertExercise({
+    const promise = exercisesService.insertExercise({
       name: search,
       difficulty: 'beginner',
       user_id: user?.id || ''
     })
 
-    if (newExercise && newExercise.length > 0) {
-      revalidate.revalidate()
-      handleChange('exercise_id', newExercise?.[0]?.id || '')
+    try {
+      const newExercise = await toast.promise(promise, {
+        loading: 'Adding exercise...',
+        success: 'Exercise added successfully',
+        error: 'Failed to add exercise'
+      })
+
+      if (newExercise && newExercise.length > 0) {
+        revalidate.revalidate()
+        handleChange('exercise_id', newExercise?.[0]?.id || '')
+      }
+    } catch (error) {
+      console.error(error)
     }
 
     setSearch('')
@@ -100,10 +111,10 @@ export function ExerciseSelect({
           />
           <CommandList>
             <CommandEmpty
-              className="hover:bg-accent flex cursor-pointer items-center p-2 text-sm transition-colors"
+              className="hover:bg-accent flex cursor-pointer items-center truncate p-2 text-sm transition-colors"
               onClick={handleAddNewExercise}
             >
-              <PlusIcon className="mr-1 size-4" /> Add new exercise
+              <PlusIcon className="mr-1 size-4" /> Add {search}
             </CommandEmpty>
             <CommandGroup>
               {exercises?.map((ex) => (
@@ -119,7 +130,7 @@ export function ExerciseSelect({
                 >
                   <CheckIcon
                     className={cn(
-                      'mr-2 h-4 w-4',
+                      'mr-2 size-4',
                       exercise.exercise_id === ex.id
                         ? 'opacity-100'
                         : 'opacity-0'
