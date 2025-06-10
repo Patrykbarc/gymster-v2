@@ -35,18 +35,7 @@ export function ExerciseList({
 
   return (
     <div className={cn('space-y-4', className)}>
-      <div className="flex items-center justify-between">
-        <Label>Exercises</Label>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={handleAddExercise}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Add Exercise
-        </Button>
-      </div>
+      <AddExerciseButton handleAddExercise={handleAddExercise} />
 
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="exercises">
@@ -76,6 +65,27 @@ export function ExerciseList({
           )}
         </Droppable>
       </DragDropContext>
+    </div>
+  )
+}
+
+function AddExerciseButton({
+  handleAddExercise
+}: {
+  handleAddExercise: () => void
+}) {
+  return (
+    <div className="flex items-center justify-between">
+      <Label>Exercises</Label>
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={handleAddExercise}
+      >
+        <Plus className="mr-2 h-4 w-4" />
+        Add Exercise
+      </Button>
     </div>
   )
 }

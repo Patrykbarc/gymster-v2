@@ -121,7 +121,7 @@ export function WorkoutPlanForm({
 
         <ExerciseList
           exercises={exercises}
-          onExercisesChange={setExercises}          
+          onExercisesChange={setExercises}
           workoutId={plan?.id || null}
         />
 

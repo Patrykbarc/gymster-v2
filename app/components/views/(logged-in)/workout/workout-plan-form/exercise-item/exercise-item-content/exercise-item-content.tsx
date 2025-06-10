@@ -28,12 +28,22 @@ export function ExerciseItemContent({
     onExerciseChange
   })
 
+  if (exercise.exercise_sets?.length === 0) {
+    return (
+      <div className="mt-4">
+        <p className="text-muted-foreground text-sm">
+          Please add your first set.
+        </p>
+      </div>
+    )
+  }
+
   return (
-    <div className="space-y-4">
+    <div className="mt-4 space-y-4">
       {exercise.exercise_sets?.map((set, setIndex) => (
         <div
           key={setIndex}
-          className="flex justify-between gap-2 border-b border-gray-100 pb-4"
+          className="flex justify-between gap-2 border-b border-gray-100 pb-4 last-of-type:border-0 last-of-type:pb-0"
         >
           <SetInputs
             set={set}

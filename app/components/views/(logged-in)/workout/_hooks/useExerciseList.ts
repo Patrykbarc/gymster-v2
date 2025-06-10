@@ -22,10 +22,12 @@ export function useExerciseList({
 
   const handleAddExercise = () => {
     const now = new Date().toISOString()
+    const newExerciseId = crypto.randomUUID()
+
     onExercisesChange([
       ...sortedExercises,
       {
-        id: crypto.randomUUID(),
+        id: newExerciseId,
         exercise_id: null,
         notes: null,
         order_position: sortedExercises.length + 1,
@@ -33,7 +35,18 @@ export function useExerciseList({
         user_id: null,
         created_at: now,
         updated_at: now,
-        exercise_sets: []
+        exercise_sets: [
+          {
+            id: crypto.randomUUID(),
+            workout_exercise_id: newExerciseId,
+            order_position: 1,
+            reps: null,
+            weight: null,
+            notes: null,
+            created_at: now,
+            updated_at: now
+          }
+        ]
       }
     ])
   }

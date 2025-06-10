@@ -60,7 +60,7 @@ function renderContent({
 
   return (
     <div className="flex flex-col justify-between gap-4 rounded-lg border p-4">
-      <div className="mb-4 flex w-full items-center gap-2">
+      <div className="flex w-full items-center gap-2">
         <GripVertical className="size-5 cursor-grab text-gray-500" />
         <Select
           value={exercise.exercise_id || ''}
@@ -92,7 +92,7 @@ function renderContent({
           type="button"
           variant="outline"
           size="sm"
-          className="mt-2"
+          className="mt-2 w-full"
           onClick={handleAddSet}
         >
           <Plus className="mr-2 size-4" /> Add Set
