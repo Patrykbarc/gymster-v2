@@ -8,7 +8,7 @@ import {
   TableRow
 } from '~/components/ui/table'
 import type { loader } from '~/routes/(logged-in)/workout/workouts'
-import { useWorkoutsTableConfig } from './hook/useWorkoutsTableConfig'
+import { useWorkoutsTableConfig } from './_hooks/useWorkoutsTableConfig'
 
 export function WorkoutPlanList() {
   const { workouts } = useLoaderData<typeof loader>()

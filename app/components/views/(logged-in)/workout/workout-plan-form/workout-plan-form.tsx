@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { z } from 'zod'
-
 import { Button } from '~/components/ui/button'
+
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
@@ -14,6 +14,7 @@ import type {
   WorkoutExerciseWithSets,
   WorkoutWithExercises
 } from '~/types/workouts.types'
+import { ExercisesErrors } from '../exercises-errors/exercises-errors'
 
 type WorkoutPlanFormProps = {
   userId: string
@@ -22,8 +23,8 @@ type WorkoutPlanFormProps = {
 
 const exerciseSetSchema = z.object({
   id: z.string().optional(),
-  reps: z.number().nullable(),
-  weight: z.number().nullable(),
+  reps: z.number().min(1, 'Reps must be greater than 0').nullable(),
+  weight: z.number().min(1, 'Weight must be greater than 0').nullable(),
   notes: z.string().nullable(),
   order_position: z.number(),
   workout_exercise_id: z.string().optional(),
@@ -120,12 +121,8 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
     }
   }
 
-  const onError = (errors: any) => {
-    console.error('Form validation errors:', errors)
-  }
-
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="name">
           Plan Name <span className="text-red-500">*</span>
@@ -159,15 +156,15 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
         draggable
         workoutId={plan?.id || null}
       />
-      {errors.exercises && (
-        <p className="text-sm text-red-500">{errors.exercises.message}</p>
-      )}
 
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-          Cancel
-        </Button>
-        <Button type="submit">{plan ? 'Update Plan' : 'Create Plan'}</Button>
+      <div className="flex justify-between">
+        <ExercisesErrors errors={errors} />
+        <div className="flex justify-end gap-2">
+          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+            Cancel
+          </Button>
+          <Button type="submit">{plan ? 'Update Plan' : 'Create Plan'}</Button>
+        </div>
       </div>
     </form>
   )

@@ -5,8 +5,8 @@ import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
 import type { WorkoutExerciseWithSets } from '~/types/workouts.types'
-import type { Field, Value } from '../../hook/useHandleSet'
 import { ExerciseItem } from '../exercise-item/exercise-item'
+import type { Field, Value } from '../../_hooks/useHandleSet'
 
 type ExerciseListProps = {
   exercises: WorkoutExerciseWithSets[]

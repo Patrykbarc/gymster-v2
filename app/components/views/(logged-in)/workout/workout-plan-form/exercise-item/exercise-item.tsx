@@ -13,7 +13,7 @@ import {
 } from '~/components/ui/select'
 import type { loader } from '~/routes/(logged-in)/workout/edit-workout-plan'
 import type { WorkoutExerciseWithSets } from '~/types/workouts.types'
-import { useHandleSet, type Field, type Value } from '../../hook/useHandleSet'
+import { useHandleSet, type Field, type Value } from '../../_hooks/useHandleSet'
 
 type ExerciseItemProps = {
   exercise: WorkoutExerciseWithSets
@@ -82,6 +82,7 @@ export function ExerciseItem({
               <Input
                 type="number"
                 value={set.reps || ''}
+                min={1}
                 onChange={(e) =>
                   handleSetChange(
                     setIndex,
@@ -98,6 +99,7 @@ export function ExerciseItem({
               <Input
                 type="number"
                 value={set.weight || ''}
+                min={1}
                 onChange={(e) =>
                   handleSetChange(
                     setIndex,
