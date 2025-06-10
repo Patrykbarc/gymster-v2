@@ -1,13 +1,9 @@
 import type {
   ExerciseSet,
+  Field,
+  Value,
   WorkoutExerciseWithSets
 } from '~/types/workouts.types'
-
-export type Field =
-  | keyof Omit<WorkoutExerciseWithSets, 'exercise_sets'>
-  | 'exercise_sets'
-
-export type Value = string | number | null | ExerciseSet[]
 
 type UseHandleSetProps = {
   exercise: WorkoutExerciseWithSets

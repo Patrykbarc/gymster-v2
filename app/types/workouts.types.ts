@@ -27,3 +27,10 @@ export type WorkoutExerciseInsert =
   Database['public']['Tables']['workout_exercises']['Insert']
 export type ExerciseSetInsert =
   Database['public']['Tables']['exercise_sets']['Insert']
+
+// Field types
+export type Field =
+  | keyof Omit<WorkoutExerciseWithSets, 'exercise_sets'>
+  | 'exercise_sets'
+
+export type Value = string | number | null | ExerciseSet[]

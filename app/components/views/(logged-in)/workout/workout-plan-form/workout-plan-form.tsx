@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
-import { z } from 'zod'
 import { Button } from '~/components/ui/button'
 
 import { Input } from '~/components/ui/input'
@@ -14,52 +13,22 @@ import type {
   WorkoutExerciseWithSets,
   WorkoutWithExercises
 } from '~/types/workouts.types'
+import { schema, type FormData } from '../_schema/schema'
 import { ExercisesErrors } from '../exercises-errors/exercises-errors'
 
-type WorkoutPlanFormProps = {
+export function WorkoutPlanForm({
+  plan = null,
+  userId
+}: {
   userId: string
   plan?: WorkoutWithExercises | null
-}
-
-const exerciseSetSchema = z.object({
-  id: z.string().optional(),
-  reps: z.number().min(1, 'Reps must be greater than 0').nullable(),
-  weight: z.number().min(1, 'Weight must be greater than 0').nullable(),
-  notes: z.string().nullable(),
-  order_position: z.number(),
-  workout_exercise_id: z.string().optional(),
-  created_at: z.string().optional(),
-  updated_at: z.string().optional()
-})
-
-const schema = z.object({
-  user_id: z.string(),
-  name: z.string().min(1, 'Name is required'),
-  description: z.string().optional(),
-  exercises: z.array(
-    z.object({
-      id: z.string(),
-      exercise_id: z.string().nullable(),
-      order_position: z.number(),
-      workout_id: z.string().nullable(),
-      user_id: z.string().nullable(),
-      created_at: z.string(),
-      updated_at: z.string(),
-      notes: z.string().nullable(),
-      exercise_sets: z.array(exerciseSetSchema)
-    })
-  )
-})
-
-type FormData = z.infer<typeof schema>
-
-export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
+}) {
   const navigate = useNavigate()
   const {
     register,
     handleSubmit,
     setValue,
-    formState: { errors }
+    formState: { errors, isSubmitting }
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -122,50 +91,56 @@ export function WorkoutPlanForm({ plan = null, userId }: WorkoutPlanFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="name">
-          Plan Name <span className="text-red-500">*</span>
-        </Label>
-        <Input
-          id="name"
-          {...register('name')}
-          placeholder="e.g., Upper Body Split"
-        />
-        {errors.name && (
-          <p className="text-sm text-red-500">{errors.name.message}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          {...register('description')}
-          placeholder="Describe the workout plan..."
-          rows={3}
-        />
-        {errors.description && (
-          <p className="text-sm text-red-500">{errors.description.message}</p>
-        )}
-      </div>
-
-      <ExerciseList
-        exercises={exercises}
-        onExercisesChange={setExercises}
-        draggable
-        workoutId={plan?.id || null}
-      />
-
-      <div className="flex justify-between">
-        <ExercisesErrors errors={errors} />
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => navigate(-1)}>
-            Cancel
-          </Button>
-          <Button type="submit">{plan ? 'Update Plan' : 'Create Plan'}</Button>
+    <fieldset disabled={isSubmitting}>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="name">
+            Plan Name <span className="text-red-500">*</span>
+          </Label>
+          <Input
+            id="name"
+            {...register('name')}
+            placeholder="e.g., Upper Body Split"
+          />
+          {errors.name && (
+            <p className="text-sm text-red-500">{errors.name.message}</p>
+          )}
         </div>
-      </div>
-    </form>
+        <div className="space-y-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            {...register('description')}
+            placeholder="Describe the workout plan..."
+            rows={3}
+          />
+          {errors.description && (
+            <p className="text-sm text-red-500">{errors.description.message}</p>
+          )}
+        </div>
+
+        <ExerciseList
+          exercises={exercises}
+          onExercisesChange={setExercises}          
+          workoutId={plan?.id || null}
+        />
+
+        <div className="flex justify-between">
+          <ExercisesErrors errors={errors} />
+          <div className="flex w-full justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(-1)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit">
+              {plan ? 'Update Plan' : 'Create Plan'}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </fieldset>
   )
 }

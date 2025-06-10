@@ -38,7 +38,7 @@ export default function EditWorkoutPlanPage() {
   const { workout, userId } = useLoaderData<typeof loader>()
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-4xl space-y-6">
       <Card>
         <CardHeader>
           <CardTitle>Plan Details</CardTitle>

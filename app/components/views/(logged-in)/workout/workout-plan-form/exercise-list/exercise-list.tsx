@@ -1,17 +1,16 @@
-import { type DropResult, DragDropContext, Droppable } from '@hello-pangea/dnd'
+import { DragDropContext, Droppable } from '@hello-pangea/dnd'
 import { Plus } from 'lucide-react'
 import { NoDataFound } from '~/components/shared/no-data-found/no-data-found'
 import { Button } from '~/components/ui/button'
 import { Label } from '~/components/ui/label'
 import { cn } from '~/lib/utils'
 import type { WorkoutExerciseWithSets } from '~/types/workouts.types'
+import { useExerciseList } from '../../_hooks/useExerciseList'
 import { ExerciseItem } from '../exercise-item/exercise-item'
-import type { Field, Value } from '../../_hooks/useHandleSet'
 
 type ExerciseListProps = {
   exercises: WorkoutExerciseWithSets[]
   onExercisesChange: (exercises: WorkoutExerciseWithSets[]) => void
-  draggable?: boolean
   className?: string
   workoutId?: string | null
 }
@@ -19,93 +18,20 @@ type ExerciseListProps = {
 export function ExerciseList({
   exercises,
   onExercisesChange,
-  draggable = false,
   className,
   workoutId = null
 }: ExerciseListProps) {
-  const sortedExercises = [...exercises].sort(
-    (a, b) => a.order_position - b.order_position
-  )
-
-  const handleAddExercise = () => {
-    const now = new Date().toISOString()
-    onExercisesChange([
-      ...sortedExercises,
-      {
-        id: crypto.randomUUID(),
-        exercise_id: null,
-        notes: null,
-        order_position: sortedExercises.length + 1,
-        workout_id: workoutId,
-        user_id: null,
-        created_at: now,
-        updated_at: now,
-        exercise_sets: []
-      }
-    ])
-  }
-
-  const handleExerciseChange = (index: number, field: Field, value: Value) => {
-    const updatedExercises = [...sortedExercises]
-    updatedExercises[index] = {
-      ...updatedExercises[index],
-      [field]: value,
-      updated_at: new Date().toISOString()
-    }
-    onExercisesChange(updatedExercises)
-  }
-
-  const handleRemoveExercise = (index: number) => {
-    const updatedExercises = sortedExercises
-      .filter((_, i) => i !== index)
-      .map((exercise, newIndex) => ({
-        ...exercise,
-        order_position: newIndex + 1,
-        updated_at: new Date().toISOString()
-      }))
-    onExercisesChange(updatedExercises)
-  }
-
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) return
-
-    const items = Array.from(sortedExercises)
-    const [reorderedItem] = items.splice(result.source.index, 1)
-    items.splice(result.destination.index, 0, reorderedItem)
-
-    const updatedItems = items.map((item, index) => ({
-      ...item,
-      order_position: index + 1,
-      updated_at: new Date().toISOString()
-    }))
-
-    onExercisesChange(updatedItems)
-  }
-
-  const renderExercises = () => (
-    <div>
-      {sortedExercises.map((exercise, index) => (
-        <ExerciseItem
-          key={exercise.id}
-          exercise={exercise}
-          index={index}
-          onExerciseChange={handleExerciseChange}
-          onRemove={handleRemoveExercise}
-          draggable={draggable}
-        />
-      ))}
-      {sortedExercises.length === 0 && (
-        <NoDataFound
-          message={
-            <>
-              No exercises added. Click &quot;Add Exercise&quot; to start
-              building your plan.
-            </>
-          }
-        />
-      )}
-    </div>
-  )
+  const {
+    sortedExercises,
+    handleAddExercise,
+    handleExerciseChange,
+    handleRemoveExercise,
+    handleDragEnd
+  } = useExerciseList({
+    exercises,
+    onExercisesChange,
+    workoutId
+  })
 
   return (
     <div className={cn('space-y-4', className)}>
@@ -122,20 +48,34 @@ export function ExerciseList({
         </Button>
       </div>
 
-      {draggable ? (
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId="exercises">
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {renderExercises()}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      ) : (
-        renderExercises()
-      )}
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="exercises">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {sortedExercises.map((exercise, index) => (
+                <ExerciseItem
+                  key={exercise.id}
+                  exercise={exercise}
+                  index={index}
+                  onExerciseChange={handleExerciseChange}
+                  onRemove={handleRemoveExercise}
+                />
+              ))}
+              {sortedExercises.length === 0 && (
+                <NoDataFound
+                  message={
+                    <>
+                      No exercises added. Click &quot;Add Exercise&quot; to
+                      start building your plan.
+                    </>
+                  }
+                />
+              )}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   )
 }
