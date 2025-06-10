@@ -1,5 +1,5 @@
 import { ChevronDown, Edit, Play, Trash2 } from 'lucide-react'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useRevalidator } from 'react-router'
 import { Button, buttonVariants } from '~/components/ui/button'
 import { TableCell } from '~/components/ui/table'
@@ -35,6 +35,13 @@ function DescriptionCell({
   const [expandedExercise, setExpandedExercise] = useState<string | null>(null)
   const descriptionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({})
   const tableCellRef = useRef<HTMLTableCellElement>(null)
+  const [tableCellHeight, setTableCellHeight] = useState(0)
+
+  useEffect(() => {
+    if (tableCellRef.current) {
+      setTableCellHeight(tableCellRef.current.clientHeight)
+    }
+  }, [])
 
   const toggleDescription = (exerciseId: string) => {
     setExpandedExercise((current) =>
@@ -42,8 +49,7 @@ function DescriptionCell({
     )
   }
 
-  const tableCellHeight = tableCellRef.current?.clientHeight
-  const showExpandDescription = tableCellHeight && tableCellHeight > 60
+  const showExpandDescription = tableCellHeight > 60
 
   return (
     <TableCell className={cn(className)} ref={tableCellRef}>
@@ -63,7 +69,7 @@ function DescriptionCell({
           <p className="pr-8">{item.description || '-'}</p>
         </div>
 
-        {tableCellHeight && tableCellHeight > 60 && (
+        {showExpandDescription && (
           <button
             onClick={() => toggleDescription(item.id)}
             className={cn(
