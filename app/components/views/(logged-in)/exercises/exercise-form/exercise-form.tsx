@@ -1,4 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useEffect, useState } from 'react'
 import {
   useForm,
   type UseFormRegister,
@@ -16,8 +17,10 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
+import { useLocalStorage } from '~/hooks/useLocalStorage'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 import { type ExerciseInsert } from '~/services/api/exercises/types'
+import { DraftAlertDialog } from '../../../../shared/draft-alert-dialog/draft-alert-dialog'
 import { formFields } from './const/form-fields'
 import { handleArrayChange } from './helper/handleArrayChange'
 import { schema } from './schema/schema'
@@ -29,6 +32,7 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors }
   } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -43,6 +47,25 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
       image_url: exercise?.image_url || null
     }
   })
+
+  const [exerciseDraft, setExerciseDraft] = useLocalStorage<FormData | null>(
+    'exercise-draft',
+    null
+  )
+
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(
+    Boolean(exerciseDraft && !exercise)
+  )
+
+  useEffect(() => {
+    if (exercise) return
+
+    const subscription = watch((values) => {
+      setExerciseDraft(values as FormData)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [watch, exercise])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -64,39 +87,75 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
         await exercisesService.insertExercise(exerciseData)
       }
       navigate('/dashboard/exercises')
+
+      setExerciseDraft(null)
     } catch (error) {
       console.error('Failed to save exercise:', error)
     }
   }
 
   return (
-    <Form method="post" onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {formFields.map((field) => (
-        <div key={field.id} className="space-y-2">
-          <Label htmlFor={field.id}>
-            {field.label}
-            {field.required && <span className="text-red-500">*</span>}
-          </Label>
-          {renderField({ field, register, setValue })}
-          {errors[field.id] && (
-            <p className="text-sm text-red-500">{errors[field.id]?.message}</p>
-          )}
-        </div>
-      ))}
+    <>
+      <DraftAlertDialog
+        texts={{
+          title: 'Unfinished draft found',
+          description:
+            "It looks like you have a saved exercise draft. Would you like to continue editing? Discarding this draft can't be undone."
+        }}
+        isOpen={isDraftDialogOpen}
+        onContinue={() => {
+          if (exerciseDraft) {
+            setValue('name', exerciseDraft.name)
+            setValue('description', exerciseDraft.description)
+            setValue('muscle_group', exerciseDraft.muscle_group)
+            setValue('difficulty', exerciseDraft.difficulty)
+            setValue('equipment', exerciseDraft.equipment)
+            setValue('instructions', exerciseDraft.instructions)
+            setValue('video_url', exerciseDraft.video_url)
+            setValue('image_url', exerciseDraft.image_url)
+          }
+          setIsDraftDialogOpen(false)
+        }}
+        onDiscard={() => {
+          setExerciseDraft(null)
+          setIsDraftDialogOpen(false)
+        }}
+      />
 
-      <div className="flex justify-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => navigate('/dashboard/exercises')}
-        >
-          Cancel
-        </Button>
-        <Button type="submit">
-          {exercise ? 'Update Exercise' : 'Create Exercise'}
-        </Button>
-      </div>
-    </Form>
+      <Form
+        method="post"
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
+        {formFields.map((field) => (
+          <div key={field.id} className="space-y-2">
+            <Label htmlFor={field.id}>
+              {field.label}
+              {field.required && <span className="text-red-500">*</span>}
+            </Label>
+            {renderField({ field, register, setValue })}
+            {errors[field.id] && (
+              <p className="text-sm text-red-500">
+                {errors[field.id]?.message}
+              </p>
+            )}
+          </div>
+        ))}
+
+        <div className="flex justify-end gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/dashboard/exercises')}
+          >
+            Cancel
+          </Button>
+          <Button type="submit">
+            {exercise ? 'Update Exercise' : 'Create Exercise'}
+          </Button>
+        </div>
+      </Form>
+    </>
   )
 }
 
