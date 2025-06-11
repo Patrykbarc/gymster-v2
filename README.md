@@ -56,7 +56,7 @@ The application will be available at `http://localhost:5173`.
 - `pnpm typecheck` - runs the type checking tool
 - `pnpm lint` - runs the linter
 - `pnpm prettier` - formats the code
-- `pnpm ese:codegen` - runs playwright code generator
+- `pnpm e2e:codegen` - runs playwright code generator
 - `pnpm e2e:test` - runs end-to-end tests
 - `pnpm db:generate-types` - generates the database types
 - `pnpm db:dump` - dumps the database schema
