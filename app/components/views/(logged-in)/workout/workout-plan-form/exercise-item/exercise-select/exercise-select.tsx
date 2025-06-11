@@ -35,11 +35,13 @@ export function ExerciseSelect({
   exercise,
   handleChange
 }: ExerciseSelectProps) {
-  const { user } = useAuthStore()
   const revalidate = useRevalidator()
+  const { user } = useAuthStore()
   const { exercises } = useLoaderData<typeof loader>()
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
+
+  const hasExercises = exercises && exercises.length > 0
 
   const exercisesById = useMemo(() => {
     if (!exercises) return {}
@@ -90,7 +92,9 @@ export function ExerciseSelect({
         >
           {exercise.exercise_id
             ? exercises?.find((ex) => ex.id === exercise.exercise_id)?.name
-            : 'Select exercise...'}
+            : hasExercises
+              ? 'Select exercise...'
+              : 'Add your first exercise'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -105,41 +109,51 @@ export function ExerciseSelect({
           }}
         >
           <CommandInput
-            placeholder="Search exercise..."
+            searchIcon={hasExercises}
+            placeholder={
+              hasExercises ? 'Search exercise...' : 'Name your exercise'
+            }
             value={search}
             onValueChange={setSearch}
           />
           <CommandList>
-            <CommandEmpty
-              className="hover:bg-accent flex cursor-pointer items-center truncate p-2 text-sm transition-colors"
-              onClick={handleAddNewExercise}
-            >
-              <PlusIcon className="mr-1 size-4" /> Add {search}
-            </CommandEmpty>
-            <CommandGroup>
-              {exercises?.map((ex) => (
-                <CommandItem
-                  key={ex.id}
-                  value={ex.id}
-                  onSelect={(currentValue) => {
-                    const newValue =
-                      currentValue === exercise.exercise_id ? '' : currentValue
-                    handleChange('exercise_id', newValue)
-                    setOpen(false)
-                  }}
-                >
-                  <CheckIcon
-                    className={cn(
-                      'mr-2 size-4',
-                      exercise.exercise_id === ex.id
-                        ? 'opacity-100'
-                        : 'opacity-0'
-                    )}
-                  />
-                  {ex.name}
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            {search.trim().length > 0 && (
+              <CommandEmpty
+                className="hover:bg-accent flex cursor-pointer items-center truncate p-2 text-sm transition-colors"
+                onClick={handleAddNewExercise}
+              >
+                <PlusIcon className="mr-1 size-4" /> Add {search}
+              </CommandEmpty>
+            )}
+
+            {hasExercises && (
+              <CommandGroup>
+                {exercises?.map((ex) => (
+                  <CommandItem
+                    key={ex.id}
+                    value={ex.id}
+                    onSelect={(currentValue) => {
+                      const newValue =
+                        currentValue === exercise.exercise_id
+                          ? ''
+                          : currentValue
+                      handleChange('exercise_id', newValue)
+                      setOpen(false)
+                    }}
+                  >
+                    <CheckIcon
+                      className={cn(
+                        'mr-2 size-4',
+                        exercise.exercise_id === ex.id
+                          ? 'opacity-100'
+                          : 'opacity-0'
+                      )}
+                    />
+                    {ex.name}
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>
