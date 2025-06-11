@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
+import { DraftAlertDialog } from '~/components/shared/draft-alert-dialog/draft-alert-dialog'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -13,7 +14,6 @@ import type {
   WorkoutExerciseWithSets,
   WorkoutWithExercises
 } from '~/types/workouts.types'
-import { DraftAlertDialog } from '../../../../shared/draft-alert-dialog/draft-alert-dialog'
 import { schema, type FormData } from '../_schema/schema'
 import { ExercisesErrors } from '../exercises-errors/exercises-errors'
 
@@ -41,8 +41,11 @@ export function WorkoutPlanForm({
     }
   })
 
+  const storageKey = plan?.id ? `workout-draft-${plan.id}` : 'workout-draft'
+  const modifiedKey = `${storageKey}:modified`
+
   const [workoutDraft, setWorkoutDraft] = useLocalStorage<FormData | null>(
-    'workout-draft',
+    storageKey,
     null
   )
 
@@ -56,6 +59,13 @@ export function WorkoutPlanForm({
         exercise_sets: exercise.exercise_sets || []
       }))
     : draftExercises
+
+  const initialDraftRef = useRef<FormData>({
+    user_id: userId,
+    name: plan?.name || '',
+    description: plan?.description || '',
+    exercises: initialExercises
+  })
 
   const [exercises, setExercises] =
     useState<WorkoutExerciseWithSets[]>(initialExercises)
@@ -76,11 +86,21 @@ export function WorkoutPlanForm({
     }
 
     setWorkoutDraft(currentDraft)
-  }, [watchedName, watchedDescription, exercises, userId])
 
-  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(
-    Boolean(workoutDraft && !plan)
-  )
+    const isModified =
+      JSON.stringify(currentDraft) !== JSON.stringify(initialDraftRef.current)
+
+    if (isModified) {
+      window.localStorage.setItem(modifiedKey, '1')
+    } else {
+      window.localStorage.removeItem(modifiedKey)
+    }
+  }, [watchedName, watchedDescription, exercises, userId, setWorkoutDraft])
+
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem(modifiedKey) === '1'
+  })
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -137,12 +157,13 @@ export function WorkoutPlanForm({
             setValue('description', workoutDraft.description ?? '')
             setExercises(workoutDraft.exercises as WorkoutExerciseWithSets[])
           }
+          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
         }}
         onDiscard={() => {
           setWorkoutDraft(null)
+          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
-          window.location.reload()
         }}
       />
 

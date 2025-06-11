@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   useForm,
   type UseFormRegister,
   type UseFormSetValue
 } from 'react-hook-form'
 import { Form, useNavigate } from 'react-router'
+import { DraftAlertDialog } from '~/components/shared/draft-alert-dialog/draft-alert-dialog'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
@@ -20,7 +21,6 @@ import { Textarea } from '~/components/ui/textarea'
 import { useLocalStorage } from '~/hooks/useLocalStorage'
 import { exercisesService } from '~/services/api/exercises/exercisesService'
 import { type ExerciseInsert } from '~/services/api/exercises/types'
-import { DraftAlertDialog } from '../../../../shared/draft-alert-dialog/draft-alert-dialog'
 import { formFields } from './const/form-fields'
 import { handleArrayChange } from './helper/handleArrayChange'
 import { schema } from './schema/schema'
@@ -48,24 +48,48 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
     }
   })
 
+  const storageKey = exercise?.id
+    ? `exercise-draft-${exercise.id}`
+    : 'exercise-draft'
+  const modifiedKey = `${storageKey}:modified`
+
   const [exerciseDraft, setExerciseDraft] = useLocalStorage<FormData | null>(
-    'exercise-draft',
+    storageKey,
     null
   )
 
-  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(
-    Boolean(exerciseDraft && !exercise)
-  )
+  const initialDraftRef = useRef<FormData>({
+    name: exercise?.name || '',
+    description: exercise?.description || null,
+    muscle_group: exercise?.muscle_group?.join(', ') || null,
+    difficulty: exercise?.difficulty || 'beginner',
+    equipment: exercise?.equipment?.join(', ') || null,
+    instructions: exercise?.instructions?.join('\n') || null,
+    video_url: exercise?.video_url || null,
+    image_url: exercise?.image_url || null
+  })
+
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem(modifiedKey) === '1'
+  })
 
   useEffect(() => {
-    if (exercise) return
-
     const subscription = watch((values) => {
       setExerciseDraft(values as FormData)
+
+      const isModified =
+        JSON.stringify(values) !== JSON.stringify(initialDraftRef.current)
+
+      if (isModified) {
+        window.localStorage.setItem(modifiedKey, '1')
+      } else {
+        window.localStorage.removeItem(modifiedKey)
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [watch, exercise])
+  }, [watch, setExerciseDraft])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -89,6 +113,7 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
       navigate('/dashboard/exercises')
 
       setExerciseDraft(null)
+      window.localStorage.removeItem(modifiedKey)
     } catch (error) {
       console.error('Failed to save exercise:', error)
     }
@@ -114,10 +139,12 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
             setValue('video_url', exerciseDraft.video_url)
             setValue('image_url', exerciseDraft.image_url)
           }
+          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
         }}
         onDiscard={() => {
           setExerciseDraft(null)
+          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
         }}
       />
