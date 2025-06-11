@@ -3,16 +3,17 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router'
 import { Button } from '~/components/ui/button'
-
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
 import { Textarea } from '~/components/ui/textarea'
 import { ExerciseList } from '~/components/views/(logged-in)/workout/workout-plan-form/exercise-list/exercise-list'
+import { useLocalStorage } from '~/hooks/useLocalStorage'
 import { workoutsService } from '~/services/api/workouts/workoutsService'
 import type {
   WorkoutExerciseWithSets,
   WorkoutWithExercises
 } from '~/types/workouts.types'
+import { DraftAlertDialog } from '../../../../shared/draft-alert-dialog/draft-alert-dialog'
 import { schema, type FormData } from '../_schema/schema'
 import { ExercisesErrors } from '../exercises-errors/exercises-errors'
 
@@ -28,7 +29,8 @@ export function WorkoutPlanForm({
     register,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting }
+    formState: { errors, isSubmitting },
+    watch
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -39,17 +41,46 @@ export function WorkoutPlanForm({
     }
   })
 
-  const [exercises, setExercises] = useState<WorkoutExerciseWithSets[]>(
-    plan?.workout_exercises?.map((exercise) => ({
-      ...exercise,
-      workout_id: plan.id,
-      exercise_sets: exercise.exercise_sets || []
-    })) || []
+  const [workoutDraft, setWorkoutDraft] = useLocalStorage<FormData | null>(
+    'workout-draft',
+    null
   )
+
+  const draftExercises: WorkoutExerciseWithSets[] =
+    (workoutDraft?.exercises as WorkoutExerciseWithSets[]) ?? []
+
+  const initialExercises: WorkoutExerciseWithSets[] = plan
+    ? plan.workout_exercises.map((exercise) => ({
+        ...exercise,
+        workout_id: plan.id,
+        exercise_sets: exercise.exercise_sets || []
+      }))
+    : draftExercises
+
+  const [exercises, setExercises] =
+    useState<WorkoutExerciseWithSets[]>(initialExercises)
 
   useEffect(() => {
     setValue('exercises', exercises)
   }, [exercises, setValue])
+
+  const watchedName = watch('name')
+  const watchedDescription = watch('description')
+
+  useEffect(() => {
+    const currentDraft: FormData = {
+      user_id: userId,
+      name: watchedName,
+      description: watchedDescription,
+      exercises
+    }
+
+    setWorkoutDraft(currentDraft)
+  }, [watchedName, watchedDescription, exercises, userId])
+
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(
+    Boolean(workoutDraft && !plan)
+  )
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -85,6 +116,7 @@ export function WorkoutPlanForm({
       }
 
       navigate('/dashboard/workouts')
+      setWorkoutDraft(null)
     } catch (error) {
       console.error('Error saving workout:', error)
     }
@@ -92,6 +124,28 @@ export function WorkoutPlanForm({
 
   return (
     <fieldset disabled={isSubmitting}>
+      <DraftAlertDialog
+        texts={{
+          title: 'Unfinished draft found',
+          description:
+            "It looks like you have a saved workout plan draft. Would you like to continue editing? Discarding this draft can't be undone."
+        }}
+        isOpen={isDraftDialogOpen}
+        onContinue={() => {
+          if (workoutDraft) {
+            setValue('name', workoutDraft.name)
+            setValue('description', workoutDraft.description ?? '')
+            setExercises(workoutDraft.exercises as WorkoutExerciseWithSets[])
+          }
+          setIsDraftDialogOpen(false)
+        }}
+        onDiscard={() => {
+          setWorkoutDraft(null)
+          setIsDraftDialogOpen(false)
+          window.location.reload()
+        }}
+      />
+
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="name">

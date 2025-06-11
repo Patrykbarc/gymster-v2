@@ -25,8 +25,6 @@ export type WorkoutExerciseWithSets = WorkoutExercise & {
 export type WorkoutInsert = Database['public']['Tables']['workouts']['Insert']
 export type WorkoutExerciseInsert =
   Database['public']['Tables']['workout_exercises']['Insert']
-export type ExerciseSetInsert =
-  Database['public']['Tables']['exercise_sets']['Insert']
 
 // Field types
 export type Field =
