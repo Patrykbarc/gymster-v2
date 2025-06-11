@@ -44,7 +44,7 @@ export function ExerciseItem({
           onExerciseChange={onExerciseChange}
         />
 
-        <AddSetButton handleAddSet={handleAddSet} />
+        <AddSetButton onAdd={handleAddSet} />
       </div>
     </DraggableWrapper>
   )
