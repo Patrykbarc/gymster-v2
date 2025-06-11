@@ -16,10 +16,8 @@ import {
   SelectValue
 } from '~/components/ui/select'
 import { Textarea } from '~/components/ui/textarea'
-import {
-  exercisesService,
-  type ExerciseInsert
-} from '~/services/api/exercises/exercisesService'
+import { exercisesService } from '~/services/api/exercises/exercisesService'
+import { type ExerciseInsert } from '~/services/api/exercises/types'
 import { formFields } from './const/form-fields'
 import { handleArrayChange } from './helper/handleArrayChange'
 import { schema } from './schema/schema'

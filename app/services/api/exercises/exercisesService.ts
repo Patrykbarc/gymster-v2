@@ -1,15 +1,11 @@
-import type { User } from '@supabase/supabase-js'
 import { client } from '~/supabase/client'
 import { server } from '~/supabase/server'
 import type { Database } from '~/types/database.types'
-import { handleApiError } from '../../../utils/handleApiError'
+import { handleApiError } from '~/utils/handleApiError'
+import type { ExerciseInsert } from './types'
 
-export type ExerciseInsert =
-  Database['public']['Tables']['exercises']['Insert'] & {
-    user_id: User['id']
-  }
+type ExercisesRow = Database['public']['Tables']['exercises']['Row']
 
-export type ExercisesRow = Database['public']['Tables']['exercises']['Row']
 export const exercisesService = {
   getExercises: async (request: Request): Promise<ExercisesRow[] | null> => {
     const { data, error } = await server(request)

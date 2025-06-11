@@ -1,20 +1,13 @@
 import { Draggable } from '@hello-pangea/dnd'
-import { GripVertical, Plus } from 'lucide-react'
-import { useLoaderData } from 'react-router'
-import { Button } from '~/components/ui/button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '~/components/ui/select'
-import type { loader } from '~/routes/(logged-in)/workout/edit-workout-plan'
+import { GripVertical } from 'lucide-react'
 import type { WorkoutExerciseWithSets } from '~/types/workouts.types'
 import { type Field, type Value } from '~/types/workouts.types'
 import { useHandleSet } from '../../_hooks/useHandleSet'
+import {
+  AddSetButton,
+  RemoveExercise
+} from './exercise-handlers/exercise-handlers'
 import { ExerciseItemContent } from './exercise-item-content/exercise-item-content'
-import { RemoveExercise } from './remove-exercise/remove-exercise'
 import { ExerciseSelect } from './exercise-select/exercise-select'
 
 type ExerciseItemProps = {
@@ -30,28 +23,6 @@ export function ExerciseItem({
   onExerciseChange,
   onRemove
 }: ExerciseItemProps) {
-  return (
-    <Draggable draggableId={exercise.id} index={index}>
-      {(provided) => (
-        <div
-          className="mb-3"
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-        >
-          {renderContent({ exercise, index, onExerciseChange, onRemove })}
-        </div>
-      )}
-    </Draggable>
-  )
-}
-
-function renderContent({
-  exercise,
-  index,
-  onExerciseChange,
-  onRemove
-}: ExerciseItemProps) {
   const { handleChange, handleAddSet } = useHandleSet({
     exercise,
     index,
@@ -59,32 +30,49 @@ function renderContent({
   })
 
   return (
-    <div className="flex flex-col justify-between gap-4 rounded-lg border p-4">
-      <div className="flex w-full items-center gap-2">
-        <GripVertical className="size-5 cursor-grab text-gray-500" />
-        <ExerciseSelect exercise={exercise} handleChange={handleChange} />
+    <DraggableWrapper exercise={exercise} index={index}>
+      <div className="flex flex-col justify-between gap-4 rounded-lg border p-4">
+        <div className="flex w-full items-center gap-2">
+          <GripVertical className="size-5 cursor-grab text-gray-500" />
+          <ExerciseSelect exercise={exercise} handleChange={handleChange} />
+          <RemoveExercise onRemove={() => onRemove(index)} />
+        </div>
 
-        <RemoveExercise onRemove={onRemove} index={index} />
+        <ExerciseItemContent
+          exercise={exercise}
+          index={index}
+          onExerciseChange={onExerciseChange}
+        />
+
+        <AddSetButton handleAddSet={handleAddSet} />
       </div>
-
-      <ExerciseItemContent
-        exercise={exercise}
-        index={index}
-        onExerciseChange={onExerciseChange}
-      />
-
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="mt-2 w-full"
-          onClick={handleAddSet}
-        >
-          <Plus className="mr-2 size-4" /> Add Set
-        </Button>
-      </div>
-    </div>
+    </DraggableWrapper>
   )
 }
 
+type DraggableWrapperProps = {
+  children: React.ReactNode
+  exercise: WorkoutExerciseWithSets
+  index: number
+}
+
+function DraggableWrapper({
+  children,
+  exercise,
+  index
+}: DraggableWrapperProps) {
+  return (
+    <Draggable draggableId={exercise.id} index={index}>
+      {(provided) => (
+        <div
+          className="z-50 mb-3 bg-white"
+          ref={provided.innerRef}
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+        >
+          {children}
+        </div>
+      )}
+    </Draggable>
+  )
+}
