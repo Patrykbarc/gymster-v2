@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   useForm,
   type UseFormRegister,
@@ -51,45 +51,71 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
   const storageKey = exercise?.id
     ? `exercise-draft-${exercise.id}`
     : 'exercise-draft'
-  const modifiedKey = `${storageKey}:modified`
 
   const [exerciseDraft, setExerciseDraft] = useLocalStorage<FormData | null>(
     storageKey,
     null
   )
 
-  const initialDraftRef = useRef<FormData>({
-    name: exercise?.name || '',
-    description: exercise?.description || null,
-    muscle_group: exercise?.muscle_group?.join(', ') || null,
-    difficulty: exercise?.difficulty || 'beginner',
-    equipment: exercise?.equipment?.join(', ') || null,
-    instructions: exercise?.instructions?.join('\n') || null,
-    video_url: exercise?.video_url || null,
-    image_url: exercise?.image_url || null
-  })
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(false)
+  const [isInitialCheckDone, setIsInitialCheckDone] = useState(false)
 
-  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem(modifiedKey) === '1'
-  })
+  const name = watch('name')
+  const description = watch('description')
+  const muscle_group = watch('muscle_group')
+  const difficulty = watch('difficulty')
+  const equipment = watch('equipment')
+  const instructions = watch('instructions')
+  const video_url = watch('video_url')
+  const image_url = watch('image_url')
 
   useEffect(() => {
-    const subscription = watch((values) => {
-      setExerciseDraft(values as FormData)
+    if (!isInitialCheckDone || isDraftDialogOpen) {
+      return
+    }
 
-      const isModified =
-        JSON.stringify(values) !== JSON.stringify(initialDraftRef.current)
-
-      if (isModified) {
-        window.localStorage.setItem(modifiedKey, '1')
-      } else {
-        window.localStorage.removeItem(modifiedKey)
-      }
+    setExerciseDraft({
+      name,
+      description,
+      muscle_group,
+      difficulty,
+      equipment,
+      instructions,
+      video_url,
+      image_url
     })
+  }, [
+    name,
+    description,
+    muscle_group,
+    difficulty,
+    equipment,
+    instructions,
+    video_url,
+    image_url,
+    setExerciseDraft,
+    isDraftDialogOpen,
+    isInitialCheckDone
+  ])
 
-    return () => subscription.unsubscribe()
-  }, [watch, setExerciseDraft])
+  useEffect(() => {
+    if (isInitialCheckDone) return
+
+    if (
+      exerciseDraft &&
+      (exerciseDraft.name ||
+        exerciseDraft.description ||
+        exerciseDraft.muscle_group ||
+        exerciseDraft.equipment ||
+        exerciseDraft.instructions ||
+        exerciseDraft.video_url ||
+        exerciseDraft.image_url)
+    ) {
+      setIsDraftDialogOpen(true)
+    } else {
+      setIsInitialCheckDone(true)
+    }
+  }, [exerciseDraft, isInitialCheckDone])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -113,7 +139,6 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
       navigate('/dashboard/exercises')
 
       setExerciseDraft(null)
-      window.localStorage.removeItem(modifiedKey)
     } catch (error) {
       console.error('Failed to save exercise:', error)
     }
@@ -139,13 +164,13 @@ export function ExerciseForm({ exercise = null, userId }: ExerciseFormProps) {
             setValue('video_url', exerciseDraft.video_url)
             setValue('image_url', exerciseDraft.image_url)
           }
-          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
+          setIsInitialCheckDone(true)
         }}
         onDiscard={() => {
           setExerciseDraft(null)
-          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
+          setIsInitialCheckDone(true)
         }}
       />
 

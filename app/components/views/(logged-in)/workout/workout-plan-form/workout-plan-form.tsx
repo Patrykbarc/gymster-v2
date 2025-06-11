@@ -42,15 +42,11 @@ export function WorkoutPlanForm({
   })
 
   const storageKey = plan?.id ? `workout-draft-${plan.id}` : 'workout-draft'
-  const modifiedKey = `${storageKey}:modified`
 
   const [workoutDraft, setWorkoutDraft] = useLocalStorage<FormData | null>(
     storageKey,
     null
   )
-
-  const draftExercises: WorkoutExerciseWithSets[] =
-    (workoutDraft?.exercises as WorkoutExerciseWithSets[]) ?? []
 
   const initialExercises: WorkoutExerciseWithSets[] = plan
     ? plan.workout_exercises.map((exercise) => ({
@@ -58,7 +54,7 @@ export function WorkoutPlanForm({
         workout_id: plan.id,
         exercise_sets: exercise.exercise_sets || []
       }))
-    : draftExercises
+    : []
 
   const initialDraftRef = useRef<FormData>({
     user_id: userId,
@@ -77,7 +73,14 @@ export function WorkoutPlanForm({
   const watchedName = watch('name')
   const watchedDescription = watch('description')
 
+  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(false)
+  const [isInitialCheckDone, setIsInitialCheckDone] = useState(false)
+
   useEffect(() => {
+    if (!isInitialCheckDone || isDraftDialogOpen) {
+      return
+    }
+
     const currentDraft: FormData = {
       user_id: userId,
       name: watchedName,
@@ -86,21 +89,30 @@ export function WorkoutPlanForm({
     }
 
     setWorkoutDraft(currentDraft)
+  }, [
+    watchedName,
+    watchedDescription,
+    exercises,
+    setWorkoutDraft,
+    userId,
+    isDraftDialogOpen,
+    isInitialCheckDone
+  ])
 
-    const isModified =
-      JSON.stringify(currentDraft) !== JSON.stringify(initialDraftRef.current)
+  useEffect(() => {
+    if (isInitialCheckDone) return
 
-    if (isModified) {
-      window.localStorage.setItem(modifiedKey, '1')
+    if (
+      workoutDraft &&
+      (workoutDraft.name ||
+        workoutDraft.description ||
+        workoutDraft.exercises.length > 0)
+    ) {
+      setIsDraftDialogOpen(true)
     } else {
-      window.localStorage.removeItem(modifiedKey)
+      setIsInitialCheckDone(true)
     }
-  }, [watchedName, watchedDescription, exercises, userId, setWorkoutDraft])
-
-  const [isDraftDialogOpen, setIsDraftDialogOpen] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return localStorage.getItem(modifiedKey) === '1'
-  })
+  }, [workoutDraft, isInitialCheckDone])
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -156,14 +168,15 @@ export function WorkoutPlanForm({
             setValue('name', workoutDraft.name)
             setValue('description', workoutDraft.description ?? '')
             setExercises(workoutDraft.exercises as WorkoutExerciseWithSets[])
+            initialDraftRef.current = workoutDraft
           }
-          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
+          setIsInitialCheckDone(true)
         }}
         onDiscard={() => {
           setWorkoutDraft(null)
-          window.localStorage.removeItem(modifiedKey)
           setIsDraftDialogOpen(false)
+          setIsInitialCheckDone(true)
         }}
       />
 
